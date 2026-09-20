@@ -206,6 +206,8 @@
         }
         .sidebar::-webkit-scrollbar { width: 3px; }
         .sidebar::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        
+        .mobile-nav { display: none; }
 
         /* ---- Logo cliquable : retour à l'accueil ---- */
         .logo {
@@ -1433,14 +1435,19 @@
             .moy-summary-card .val { font-size: 28px; }
             .moy-summary-card .val-sm { font-size: 20px; }
             .moy-header, .moy-row {
-                grid-template-columns: minmax(140px, 1.5fr) 1fr 1fr 1fr 60px 20px;
-                gap: 5px;
-                min-width: 520px;
+                grid-template-columns: minmax(80px, 1fr) 42px 42px 42px 44px 18px;
+                gap: 3px;
+                min-width: 290px;
             }
-            .moy-header { font-size: 7px; }
-            .moy-name { font-size: 10px; }
-            .moy-input { font-size: 10px; padding: 3px 4px; }
-            .moy-avg { font-size: 11px; padding: 3px 4px; }
+            .moy-header { font-size: 6.5px; padding: 3px 2px; }
+            .moy-name { font-size: 10px; gap: 4px; }
+            .moy-name .dot { width: 6px; height: 6px; }
+            .moy-name small { font-size: 7px; }
+            .moy-name-text { font-size: 10px; }
+            .moy-input { font-size: 10px; padding: 3px 2px; border-radius: 6px; }
+            .moy-avg { font-size: 11px; padding: 3px 2px; border-radius: 6px; }
+            .moy-del { font-size: 10px; padding: 1px 3px; }
+            .moy-table-wrap { margin: 0; padding: 0 0 2px; }
             .cal-day { font-size: 10px; border-radius: 7px; }
             .cal-day.header { font-size: 7px; }
                   /* --- UNIVA mobile scroll fix --- */
@@ -1463,6 +1470,57 @@
             .stats-bottom {
                 flex-shrink: 0;
             }
+     
+            /* --- Barre de navigation mobile --- */
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0; left: 0; right: 0;
+                background: var(--sidebar-bg);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-top: 1px solid var(--border);
+                z-index: 90;
+                padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+                box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.35);
+                justify-content: space-around;
+                gap: 2px;
+            }
+            .mobile-nav .nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                padding: 6px 2px;
+                margin: 0;
+                min-height: auto;
+                flex: 1;
+                border-radius: 10px;
+                background: transparent;
+                color: var(--muted);
+                font-weight: 600;
+                font-size: 9px;
+                transition: all 0.2s ease;
+            }
+            .mobile-nav .nav-item::before { display: none; }
+            .mobile-nav .nav-item.active {
+                background: var(--badge-primary-bg);
+                color: var(--accent-primary-text);
+            }
+            .mobile-nav .nav-icon {
+                font-size: 17px;
+                width: auto;
+                opacity: 0.85;
+                line-height: 1;
+            }
+            .mobile-nav .nav-item.active .nav-icon { opacity: 1; }
+            .mobile-nav .nav-text {
+                font-size: 9px;
+                letter-spacing: 0.2px;
+                white-space: nowrap;
+            }
+            .page { padding-bottom: 84px !important; }
         }
         @media (max-width: 480px) {
             .kpi-grid { grid-template-columns: 1fr 1fr; }
@@ -1490,6 +1548,34 @@
             .welcome-nav { flex-direction: column-reverse; }
             .welcome-nav .primary-btn { width: 100%; }
             .welcome-nav .cancel-btn { width: 100%; }
+   
+        /* =============================================
+           MODE PAYSAGE — téléphones tournés
+           ============================================= */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .sidebar { display: none; }
+            .mobile-nav { display: none; }
+            .page { padding: 4px 8px 4px !important; }
+            .page[data-page="timetable"] { height: 100dvh; }
+            .topbar { margin-bottom: 4px; }
+            .page-title { font-size: 15px; }
+            .page-subtitle { display: none; }
+            .week-header {
+                grid-template-columns: 70px repeat(6, 1fr);
+                gap: 3px;
+            }
+            .schedule-grid {
+                grid-template-columns: 70px repeat(6, 1fr);
+                gap: 3px;
+            }
+            .day-label { font-size: 10px; padding: 4px 2px; }
+            .time-slot { font-size: 9px; padding: 2px; }
+            .time-slot .ses-label { font-size: 9px; }
+            .time-slot .ses-hours { font-size: 7px; }
+            .class-block { padding: 3px 5px; }
+            .class-block strong { font-size: 10px; }
+            .class-block small { font-size: 8px; }
+        }
         }
     </style>
 </head>
@@ -1780,6 +1866,15 @@
             </div>
         </div>
     </div>
+    <!-- BARRE DE NAVIGATION MOBILE -->
+    <nav class="mobile-nav" id="mobileNav">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">◇</span><span class="nav-text">Tableau</span></button>
+        <button class="nav-item" data-page="moyenne"><span class="nav-icon">∑</span><span class="nav-text">Moyenne</span></button>
+        <button class="nav-item" data-page="timetable"><span class="nav-icon">▤</span><span class="nav-text">Emploi</span></button>
+        <button class="nav-item" data-page="homework"><span class="nav-icon">✓</span><span class="nav-text">Tâches</span></button>
+        <button class="nav-item" data-page="exams"><span class="nav-icon">▣</span><span class="nav-text">Examens</span></button>
+        <button class="nav-item" data-page="calendar"><span class="nav-icon">▦</span><span class="nav-text">Agenda</span></button>
+    </nav>
 
     <!-- MODAL -->
     <div class="modal-overlay" id="modalOverlay">
