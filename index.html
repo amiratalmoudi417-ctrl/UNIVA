@@ -1692,9 +1692,12 @@
                             <p class="page-subtitle" id="dashboardSubtitle">Transforme tes données en décisions</p>
                         </div>
                         <div class="top-actions">
-                            <div class="date-chip" id="todayDate">samedi 5 septembre</div>
-                            <button class="primary-btn" id="newTaskBtn" onclick="openModal('task')">+ Nouvelle tâche</button>
-                        </div>
+    <button class="secondary-btn" onclick="toggleTheme()" aria-label="Theme">
+        <span id="themeIconMobile">☾</span>
+    </button>
+    <div class="date-chip" id="todayDate">samedi 5 septembre</div>
+    <button class="primary-btn" id="newTaskBtn" onclick="openModal('task')">+ Nouvelle tâche</button>
+</div>
                     </div>
 
                     <section class="kpi-grid" id="kpiGrid">
@@ -2355,15 +2358,17 @@
             renderAll();
             showToast(next === 'light' ? t('toast_theme_day') : t('toast_theme_night'));
         }
-        function updateThemeToggleUI() {
-            const isLight = getCurrentTheme() === 'light';
-            const icon = document.getElementById('themeIcon');
-            const label = document.getElementById('themeLabel');
-            if (icon) icon.textContent = isLight ? '☀' : '☾';
-            if (label) label.textContent = isLight ? t('theme_day') : t('theme_night');
-            const langLabel = document.getElementById('langLabel');
-            if (langLabel) langLabel.textContent = currentLang.toUpperCase();
-        }
+function updateThemeToggleUI() {
+    const isLight = getCurrentTheme() === 'light';
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    const iconMobile = document.getElementById('themeIconMobile');
+    if (icon) icon.textContent = isLight ? '☀' : '☾';
+    if (label) label.textContent = isLight ? t('theme_day') : t('theme_night');
+    if (iconMobile) iconMobile.textContent = isLight ? '☀' : '☾';
+    const langLabel = document.getElementById('langLabel');
+    if (langLabel) langLabel.textContent = currentLang.toUpperCase();
+}
         function getThemePalette() {
             const light = getCurrentTheme() === 'light';
             return light ? {
