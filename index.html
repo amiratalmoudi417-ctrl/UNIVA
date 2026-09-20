@@ -188,6 +188,48 @@
         ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
 
         .mobile-nav { display: none; }
+        .mobile-theme-btn { display: none; }
+                .page-transition-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 500;
+            opacity: 0;
+            background: radial-gradient(circle at center, rgba(96, 165, 250, 0.10), transparent 60%);
+            backdrop-filter: blur(0px);
+        }
+        .page-transition-overlay .trans-icon {
+            font-size: 140px;
+            font-weight: 300;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 60px rgba(96, 165, 250, 0.7));
+            transform: scale(0.3);
+            opacity: 0;
+        }
+        .page-transition-overlay.active {
+            animation: overlayFade 0.75s ease-out;
+        }
+        .page-transition-overlay.active .trans-icon {
+            animation: iconPop 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes overlayFade {
+            0%   { opacity: 1; backdrop-filter: blur(6px); }
+            60%  { opacity: 1; backdrop-filter: blur(6px); }
+            100% { opacity: 0; backdrop-filter: blur(0px); }
+        }
+        @keyframes iconPop {
+            0%   { transform: scale(0.3) rotate(-25deg); opacity: 0; }
+            30%  { transform: scale(1.25) rotate(8deg);  opacity: 1; }
+            55%  { transform: scale(1)    rotate(0deg);  opacity: 1; }
+            75%  { transform: scale(1.05) rotate(0deg);  opacity: 1; }
+            100% { transform: scale(2)    rotate(0deg);  opacity: 0; }
+        }
 
         .app { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
 
@@ -1487,6 +1529,30 @@
             .mobile-nav .nav-item.active .nav-icon { opacity: 1; }
             .mobile-nav .nav-text { font-size: 9px; letter-spacing: 0.2px; white-space: nowrap; }
             .page { padding-bottom: 84px !important; }
+                        .mobile-theme-btn {
+                display: flex;
+                position: fixed;
+                right: 12px;
+                bottom: 92px;
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                background: var(--bg-card);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border: 1px solid var(--border);
+                color: var(--text);
+                font-size: 22px;
+                z-index: 95;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(96, 165, 250, 0.10);
+                cursor: pointer;
+                transition: transform 0.2s ease, background 0.3s ease;
+            }
+            .mobile-theme-btn:active {
+                transform: scale(0.92);
+            }
         }
         @media (max-width: 480px) {
             .kpi-grid { grid-template-columns: 1fr 1fr; }
@@ -1820,6 +1886,14 @@
 
             </div>
         </div>
+    </div>
+        <!-- BOUTON THEME FLOTTANT (mobile) -->
+    <button class="mobile-theme-btn" onclick="toggleTheme()" aria-label="Changer le thème">
+        <span id="mobileThemeIcon">☾</span>
+    </button>
+        <!-- TRANSITION ENTRE MODULES -->
+    <div class="page-transition-overlay" id="pageTransition">
+        <span class="trans-icon" id="transIcon">◇</span>
     </div>
 
     <!-- BARRE DE NAVIGATION MOBILE -->
@@ -2312,10 +2386,13 @@
             const isLight = getCurrentTheme() === 'light';
             const icon = document.getElementById('themeIcon');
             const label = document.getElementById('themeLabel');
+            const mobileIcon = document.getElementById('mobileThemeIcon');
             if (icon) icon.textContent = isLight ? '☀' : '☾';
             if (label) label.textContent = isLight ? t('theme_day') : t('theme_night');
+            if (mobileIcon) mobileIcon.textContent = isLight ? '☀' : '☾';
             const langLabel = document.getElementById('langLabel');
             if (langLabel) langLabel.textContent = currentLang.toUpperCase();
+        }
         }
         function getThemePalette() {
             const light = getCurrentTheme() === 'light';
@@ -2528,11 +2605,36 @@
 
         let currentPage = 'dashboard';
         const pageOrder = ['dashboard', 'moyenne', 'timetable', 'homework', 'exams', 'calendar'];
+                const PAGE_ICONS = {
+            dashboard: '◇',
+            moyenne:   '∑',
+            timetable: '▤',
+            homework:  '✓',
+            exams:     '▣',
+            calendar:  '▦'
+        };
+
+        function showPageTransition(icon) {
+            const overlay = document.getElementById('pageTransition');
+            const iconEl = document.getElementById('transIcon');
+            if (!overlay || !iconEl) return;
+            iconEl.textContent = icon;
+            overlay.classList.remove('active');
+            void overlay.offsetWidth;
+            overlay.classList.add('active');
+            clearTimeout(overlay._timeout);
+            overlay._timeout = setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 800);
+        }
         function navigateTo(page) {
             if (page === currentPage) return;
             const wrapper = document.getElementById('pageWrapper');
             const index = pageOrder.indexOf(page);
             if (index === -1) return;
+
+            showPageTransition(PAGE_ICONS[page] || '◇');
+
             wrapper.style.transform = `translateX(-${index * 100}%)`;
             currentPage = page;
             document.querySelectorAll('.nav-item').forEach(el => { el.classList.toggle('active', el.dataset.page === page); });
