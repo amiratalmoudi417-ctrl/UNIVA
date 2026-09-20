@@ -2381,7 +2381,15 @@ function updateThemeToggleUI() {
         }
 
         const WEIGHTS = { oral: 0.10, ds: 0.20, exam: 0.70 };
-        const STORAGE_KEY = 'univa_data_v7';
+        const STORAGE_KEY_BASE = 'univa_data_v7';
+        const USER_KEY = 'univa_user';
+
+        let userName = localStorage.getItem(USER_KEY) || '';
+
+        function getStorageKey() {
+            const u = (userName || 'default').toLowerCase().trim().replace(/\s+/g, '_');
+            return STORAGE_KEY_BASE + '_' + u;
+        }
 
         function getDefaultData() {
             const subj = (id, name, color, credits, semester) => ({ id, name, color, credits, semester, oral: null, ds: null, exam: null });
@@ -2423,7 +2431,7 @@ function updateThemeToggleUI() {
         let data = loadData();
         function loadData() {
             try {
-                const raw = localStorage.getItem(STORAGE_KEY);
+                const raw = localStorage.getItem(getStorageKey());
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     const def = getDefaultData();
@@ -2443,8 +2451,8 @@ function updateThemeToggleUI() {
                 }
             } catch (e) { console.warn('Load error', e); }
             return getDefaultData();
-        }
-        function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+        }       
+        function persist() { localStorage.setItem(getStorageKey(), JSON.stringify(data)); }
         function saveData() { persist(); renderAll(); }
         function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
         function getSubject(id) { return data.subjects.find(s => s.id === id); }
@@ -2478,7 +2486,6 @@ function updateThemeToggleUI() {
             return m[p] || t('filter_low');
         }
 
-        let userName = '';
         let userGender = 'female';
         function selectGender(gender) {
             userGender = gender;
@@ -2510,6 +2517,7 @@ function updateThemeToggleUI() {
             const overlay = document.getElementById('welcomeOverlay');
             const app = document.getElementById('appContainer');
             const input = document.getElementById('nameInput');
+            if (userName) input.value = userName;
 
             function validateName() {
                 const name = input.value.trim();
@@ -2540,6 +2548,8 @@ function updateThemeToggleUI() {
             function enterApp() {
                 if (!validateName()) { goToStep(2); return; }
                 userName = input.value.trim();
+                localStorage.setItem(USER_KEY, userName);
+                data = loadData();
                 document.getElementById('profileName').textContent = userName;
                 document.getElementById('avatarLetter').textContent = userName.charAt(0).toUpperCase();
                 updateGreeting();
