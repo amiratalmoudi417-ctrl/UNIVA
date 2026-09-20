@@ -2,7 +2,7 @@
 <html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>UNIVA · Dashboard Étudiant</title>
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#070B14" />
@@ -172,18 +172,12 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-     if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('Service Worker registered:', reg))
-      .catch(err => console.warn('Service Worker registration failed:', err));
-  });
-}
-   body {
+        body {
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             transition: background-color 0.45s ease, color 0.45s ease;
         }
@@ -193,7 +187,9 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
 
-        .app { display: flex; height: 100vh; overflow: hidden; }
+        .mobile-nav { display: none; }
+
+        .app { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
 
         .univa-logo-mark { width: 100%; height: 100%; display: block; border-radius: inherit; }
 
@@ -208,6 +204,7 @@
             flex-shrink: 0;
             z-index: 10;
             height: 100vh;
+            height: 100dvh;
             overflow-y: auto;
             box-shadow: var(--sidebar-shadow);
             transition: background-color 0.45s ease, border-color 0.45s ease;
@@ -215,7 +212,6 @@
         .sidebar::-webkit-scrollbar { width: 3px; }
         .sidebar::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
 
-        /* ---- Logo cliquable : retour à l'accueil ---- */
         .logo {
             display: flex; align-items: center; gap: 10px;
             font-family: var(--font-serif);
@@ -231,7 +227,6 @@
         .logo:hover { background: var(--surface-2); }
         .logo:active { transform: scale(0.97); }
 
-        /* ---- Icône sidebar — U flottant sans cadre ---- */
         .logo-icon {
             width: 42px;
             height: 42px;
@@ -350,14 +345,14 @@
         }
         .theme-toggle .tt-label, .lang-toggle .tt-label { font-size: 9px; }
 
-        .page-container { flex: 1; position: relative; overflow: hidden; height: 100vh; }
+        .page-container { flex: 1; position: relative; overflow: hidden; height: 100vh; height: 100dvh; }
         .page-wrapper {
             display: flex; height: 100%;
             transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
         }
         .page {
-            min-width: 100%; height: 100vh; overflow-y: auto;
+            min-width: 100%; height: 100vh; height: 100dvh; overflow-y: auto;
             padding: 12px 20px 16px; background: var(--bg);
             display: flex; flex-direction: column;
             transition: background-color 0.45s ease;
@@ -368,6 +363,7 @@
         .page[data-page="timetable"] {
             overflow: hidden;
             height: 100vh;
+            height: 100dvh;
         }
 
         .topbar {
@@ -651,9 +647,6 @@
         .panel-scroll::-webkit-scrollbar { width: 3px; }
         .panel-scroll::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
 
-        /* ==========================================================
-           TIMETABLE — ajusté à la taille de l'écran (pas de scroll)
-           ========================================================== */
         .timetable-wrapper {
             display: flex; flex-direction: column;
             height: 100%; overflow: hidden;
@@ -1144,9 +1137,6 @@
         .empty-state .emoji { font-size: 22px; margin-bottom: 4px; }
         .empty-state p { font-size: 10px; }
 
-        /* ==========================================================
-           WELCOME — version améliorée
-           ========================================================== */
         .welcome-overlay {
             position: fixed; inset: 0;
             background: var(--bg);
@@ -1228,7 +1218,6 @@
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* ---- Logo U flottant (sans cadre) ---- */
         .welcome-logo-mark {
             width: 170px;
             height: 170px;
@@ -1280,7 +1269,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Champs plus doux et un peu plus grands */
         .welcome-box .form-group { text-align: left; }
         .welcome-box .form-group label {
             font-size: 10.5px;
@@ -1311,7 +1299,6 @@
             box-shadow: 0 14px 44px rgba(96, 165, 250, 0.50);
         }
 
-        /* ---- Étapes du welcome (3 écrans) ---- */
         .welcome-step { display: none; }
         .welcome-step.active {
             display: block;
@@ -1440,16 +1427,66 @@
             .moy-summary-card .val { font-size: 28px; }
             .moy-summary-card .val-sm { font-size: 20px; }
             .moy-header, .moy-row {
-                grid-template-columns: minmax(140px, 1.5fr) 1fr 1fr 1fr 60px 20px;
-                gap: 5px;
-                min-width: 520px;
+                grid-template-columns: minmax(80px, 1fr) 42px 42px 42px 44px 18px;
+                gap: 3px;
+                min-width: 290px;
             }
-            .moy-header { font-size: 7px; }
-            .moy-name { font-size: 10px; }
-            .moy-input { font-size: 10px; padding: 3px 4px; }
-            .moy-avg { font-size: 11px; padding: 3px 4px; }
+            .moy-header { font-size: 6.5px; padding: 3px 2px; }
+            .moy-name { font-size: 10px; gap: 4px; }
+            .moy-name .dot { width: 6px; height: 6px; }
+            .moy-name small { font-size: 7px; }
+            .moy-input { font-size: 10px; padding: 3px 2px; border-radius: 6px; }
+            .moy-avg { font-size: 11px; padding: 3px 2px; border-radius: 6px; }
+            .moy-del { font-size: 10px; padding: 1px 3px; }
             .cal-day { font-size: 10px; border-radius: 7px; }
             .cal-day.header { font-size: 7px; }
+
+            .page { height: auto; min-height: 100dvh; overflow-y: auto; }
+            .charts-row { flex: none; min-height: auto; }
+            .chart-card { min-height: 200px; }
+            .chart-body { flex: none; min-height: 150px; }
+            .stats-bottom { flex-shrink: 0; }
+
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0; left: 0; right: 0;
+                background: var(--sidebar-bg);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-top: 1px solid var(--border);
+                z-index: 90;
+                padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+                box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.35);
+                justify-content: space-around;
+                gap: 2px;
+            }
+            .mobile-nav .nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                padding: 6px 2px;
+                margin: 0;
+                min-height: auto;
+                flex: 1;
+                border-radius: 10px;
+                background: transparent;
+                color: var(--muted);
+                font-weight: 600;
+                font-size: 9px;
+                transition: all 0.2s ease;
+            }
+            .mobile-nav .nav-item::before { display: none; }
+            .mobile-nav .nav-item.active {
+                background: var(--badge-primary-bg);
+                color: var(--accent-primary-text);
+            }
+            .mobile-nav .nav-icon { font-size: 17px; width: auto; opacity: 0.85; line-height: 1; }
+            .mobile-nav .nav-item.active .nav-icon { opacity: 1; }
+            .mobile-nav .nav-text { font-size: 9px; letter-spacing: 0.2px; white-space: nowrap; }
+            .page { padding-bottom: 84px !important; }
         }
         @media (max-width: 480px) {
             .kpi-grid { grid-template-columns: 1fr 1fr; }
@@ -1478,6 +1515,27 @@
             .welcome-nav .primary-btn { width: 100%; }
             .welcome-nav .cancel-btn { width: 100%; }
         }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .sidebar { display: none; }
+            .mobile-nav { display: none; }
+            .page { padding: 4px 8px 4px !important; }
+            .page[data-page="timetable"] { height: 100dvh; }
+            .topbar { margin-bottom: 4px; }
+            .page-title { font-size: 15px; }
+            .page-subtitle { display: none; }
+            .week-header, .schedule-grid {
+                grid-template-columns: 70px repeat(6, 1fr);
+                gap: 3px;
+            }
+            .day-label { font-size: 10px; padding: 4px 2px; }
+            .time-slot { font-size: 9px; padding: 2px; }
+            .time-slot .ses-label { font-size: 9px; }
+            .time-slot .ses-hours { font-size: 7px; }
+            .class-block { padding: 3px 5px; }
+            .class-block strong { font-size: 10px; }
+            .class-block small { font-size: 8px; }
+        }
     </style>
 </head>
 <body>
@@ -1491,7 +1549,6 @@
 
         <div class="welcome-box">
 
-            <!-- ÉTAPE 1 : Logo + UNIVA + slogan -->
             <div class="welcome-step active" data-step="1">
                 <div class="welcome-logo-mark">
                     <img src="logo.png" alt="UNIVA" />
@@ -1501,7 +1558,6 @@
                 <button class="primary-btn" id="startBtn">Commencer</button>
             </div>
 
-            <!-- ÉTAPE 2 : Prénom -->
             <div class="welcome-step" data-step="2">
                 <div class="welcome-step-icon">👋</div>
                 <div class="welcome-step-title" id="welcomeNameLabel">Quel est ton prénom ?</div>
@@ -1514,7 +1570,6 @@
                 </div>
             </div>
 
-            <!-- ÉTAPE 3 : Étudiante / Étudiant -->
             <div class="welcome-step" data-step="3">
                 <div class="welcome-step-icon">🎓</div>
                 <div class="welcome-step-title" id="welcomeGenderLabel">Je suis :</div>
@@ -1534,7 +1589,6 @@
                 </div>
             </div>
 
-            <!-- Indicateur d'étapes -->
             <div class="welcome-dots" id="welcomeDots">
                 <span class="active"></span><span></span><span></span>
             </div>
@@ -1768,6 +1822,16 @@
         </div>
     </div>
 
+    <!-- BARRE DE NAVIGATION MOBILE -->
+    <nav class="mobile-nav" id="mobileNav">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">◇</span><span class="nav-text">Tableau</span></button>
+        <button class="nav-item" data-page="moyenne"><span class="nav-icon">∑</span><span class="nav-text">Moyenne</span></button>
+        <button class="nav-item" data-page="timetable"><span class="nav-icon">▤</span><span class="nav-text">Emploi</span></button>
+        <button class="nav-item" data-page="homework"><span class="nav-icon">✓</span><span class="nav-text">Tâches</span></button>
+        <button class="nav-item" data-page="exams"><span class="nav-icon">▣</span><span class="nav-text">Examens</span></button>
+        <button class="nav-item" data-page="calendar"><span class="nav-icon">▦</span><span class="nav-text">Agenda</span></button>
+    </nav>
+
     <!-- MODAL -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modalContent">
@@ -1783,9 +1847,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ============================================================
-        // TRANSLATIONS
-        // ============================================================
         const TRANSLATIONS = {
             fr: {
                 logo_sub: "Intelligence · Organisation · Maîtrise",
@@ -2268,7 +2329,15 @@
         }
 
         const WEIGHTS = { oral: 0.10, ds: 0.20, exam: 0.70 };
-        const STORAGE_KEY = 'univa_data_v7';
+        const STORAGE_KEY_BASE = 'univa_data_v7';
+        const USER_KEY = 'univa_user';
+
+        let userName = localStorage.getItem(USER_KEY) || '';
+
+        function getStorageKey() {
+            const u = (userName || 'default').toLowerCase().trim().replace(/\s+/g, '_');
+            return STORAGE_KEY_BASE + '_' + u;
+        }
 
         function getDefaultData() {
             const subj = (id, name, color, credits, semester) => ({ id, name, color, credits, semester, oral: null, ds: null, exam: null });
@@ -2310,7 +2379,7 @@
         let data = loadData();
         function loadData() {
             try {
-                const raw = localStorage.getItem(STORAGE_KEY);
+                const raw = localStorage.getItem(getStorageKey());
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     const def = getDefaultData();
@@ -2331,7 +2400,7 @@
             } catch (e) { console.warn('Load error', e); }
             return getDefaultData();
         }
-        function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+        function persist() { localStorage.setItem(getStorageKey(), JSON.stringify(data)); }
         function saveData() { persist(); renderAll(); }
         function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
         function getSubject(id) { return data.subjects.find(s => s.id === id); }
@@ -2365,7 +2434,6 @@
             return m[p] || t('filter_low');
         }
 
-        let userName = '';
         let userGender = 'female';
         function selectGender(gender) {
             userGender = gender;
@@ -2374,9 +2442,6 @@
             });
         }
 
-        // ============================================================
-        // WELCOME — navigation entre les 3 étapes
-        // ============================================================
         let welcomeStep = 1;
         function goToStep(n) {
             n = Math.max(1, Math.min(3, n));
@@ -2397,6 +2462,8 @@
             const overlay = document.getElementById('welcomeOverlay');
             const app = document.getElementById('appContainer');
             const input = document.getElementById('nameInput');
+
+            if (userName) input.value = userName;
 
             function validateName() {
                 const name = input.value.trim();
@@ -2427,6 +2494,8 @@
             function enterApp() {
                 if (!validateName()) { goToStep(2); return; }
                 userName = input.value.trim();
+                try { localStorage.setItem(USER_KEY, userName); } catch (e) {}
+                data = loadData();
                 document.getElementById('profileName').textContent = userName;
                 document.getElementById('avatarLetter').textContent = userName.charAt(0).toUpperCase();
                 updateGreeting();
@@ -2441,7 +2510,6 @@
             goToStep(1);
         }
 
-        // ---- Retour à l'accueil en cliquant sur le logo ----
         function goToWelcome() {
             const overlay = document.getElementById('welcomeOverlay');
             const app = document.getElementById('appContainer');
@@ -2763,9 +2831,6 @@
             saveData(); renderAll(); showToast(t('toast_subject_deleted'));
         }
 
-        // ============================================================
-        // TIMETABLE — Fusion + ajustement écran (pas de scroll)
-        // ============================================================
         function parseTime(timeStr) { const [h, m] = timeStr.split(':').map(Number); return h * 60 + m; }
 
         function buildRowList() {
@@ -3173,9 +3238,6 @@
             el._timeout = setTimeout(() => el.classList.remove('show'), 2600);
         }
 
-        // ============================================================
-        // INIT
-        // ============================================================
         applyTheme(getCurrentTheme());
         applyTranslations();
         updateThemeToggleUI();
@@ -3187,7 +3249,15 @@
         const pages = wrapper.querySelectorAll('.page');
         pages.forEach(p => p.style.minWidth = '100%');
 
-        console.log('✨ UNIVA · Logo U flottant (sans cadre)');
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered:', reg))
+                    .catch(err => console.warn('Service Worker registration failed:', err));
+            });
+        }
+
+        console.log('✨ UNIVA · v8 mobile + PWA');
         console.log('📊 Data:', data);
         console.log('🌐 Language:', currentLang);
     </script>
