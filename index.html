@@ -1443,6 +1443,26 @@
             .moy-avg { font-size: 11px; padding: 3px 4px; }
             .cal-day { font-size: 10px; border-radius: 7px; }
             .cal-day.header { font-size: 7px; }
+                  /* --- UNIVA mobile scroll fix --- */
+            .page {
+                height: auto;
+                min-height: 100dvh;
+                overflow-y: auto;
+            }
+            .charts-row {
+                flex: none;
+                min-height: auto;
+            }
+            .chart-card {
+                min-height: 200px;
+            }
+            .chart-body {
+                flex: none;
+                min-height: 150px;
+            }
+            .stats-bottom {
+                flex-shrink: 0;
+            }
         }
         @media (max-width: 480px) {
             .kpi-grid { grid-template-columns: 1fr 1fr; }
