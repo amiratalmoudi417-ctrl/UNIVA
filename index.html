@@ -889,7 +889,7 @@
         }
         .exam-delete:hover { background: var(--badge-primary-bg); color: var(--accent-primary-text); }
 
-        #fullCalendar { display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; }
+        #fullCalendar { display: flex; flex-direction: column; flex: 1.6; min-height: 0; min-width: 0; }
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -929,15 +929,101 @@
             color: #FFFFFF; font-weight: 700;
             box-shadow: 0 0 30px rgba(96, 165, 250, 0.30);
         }
+        .cal-day { cursor: pointer; }
         .cal-day.has-exam { color: var(--accent-primary-text); font-weight: 600; }
         .cal-day.has-exam::after {
             content: "✦"; font-size: 7px;
-            position: absolute; bottom: 3px; left: 50%;
-            transform: translateX(-50%);
+            position: absolute; bottom: 3px; right: 6px;
             color: var(--accent-secondary-text);
+        }
+        .cal-day.has-task::before {
+            content: "●"; font-size: 6px;
+            position: absolute; bottom: 3px; left: 6px;
+            color: var(--accent-primary-text);
         }
         .cal-day.active.has-exam { color: #FFFFFF; }
         .cal-day.active.has-exam::after { color: #FFFFFF; }
+        .cal-day.active.has-task::before { color: #FFFFFF; }
+        .cal-day.selected {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: -2px;
+            background: var(--surface-3);
+            color: var(--text);
+        }
+        .cal-day.active.selected { outline-color: #FFFFFF; }
+
+        .calendar-layout { display: flex; gap: 14px; height: 100%; min-height: 0; }
+        .calendar-events {
+            flex: 1; min-width: 0;
+            overflow-y: auto;
+            padding-left: 14px;
+            border-left: 1px solid var(--divider);
+        }
+        .calendar-events::-webkit-scrollbar { width: 4px; }
+        .calendar-events::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        .cal-events-header {
+            font-family: var(--font-serif);
+            font-size: 14px; font-weight: 700;
+            text-transform: capitalize;
+            color: var(--text);
+            padding-bottom: 8px; margin-bottom: 10px;
+            border-bottom: 1px solid var(--divider);
+        }
+        .cal-events-group { margin-bottom: 14px; }
+        .cal-events-title {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 8.5px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            color: var(--muted); margin-bottom: 6px;
+        }
+        .cal-event {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 10px; margin-bottom: 5px;
+            border-radius: 10px; font-size: 11px;
+            border: 1px solid var(--surface-2);
+            background: var(--surface-1);
+            transition: 0.2s ease;
+        }
+        .cal-event:hover { transform: translateX(2px); }
+        .cal-event.exam { background: var(--c-purple-bg); border-color: var(--c-purple-border); cursor: pointer; }
+        .cal-event.task { background: var(--c-blue-bg); border-color: var(--c-blue-border); }
+        .cal-event .ce-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+        .cal-event .ce-name {
+            flex: 1; min-width: 0;
+            font-family: var(--font-serif); font-weight: 600;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .cal-event .ce-name.done { text-decoration: line-through; color: var(--muted); cursor: pointer; }
+        .cal-event .ce-meta { font-size: 8.5px; color: var(--muted); flex-shrink: 0; }
+
+        .new-subject-inline {
+            margin-top: 8px; padding: 10px;
+            border-radius: 12px;
+            background: var(--surface-2);
+            border: 1px dashed var(--border);
+            animation: stepIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .new-subject-inline input,
+        .new-subject-inline select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 7px 10px;
+            border-radius: 9px;
+            font-size: 11px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .new-subject-inline input:focus,
+        .new-subject-inline select:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+        }
+        .new-subject-inline .primary-btn {
+            width: 100%; padding: 8px; border-radius: 10px;
+            font-size: 10.5px; margin: 0;
+        }
 
         .moy-formula {
             background: var(--badge-tertiary-bg);
@@ -1483,6 +1569,15 @@
             .cal-day { font-size: 10px; border-radius: 7px; }
             .cal-day.header { font-size: 7px; }
 
+            .calendar-layout { flex-direction: column; gap: 10px; }
+            #fullCalendar { flex: none; min-height: 300px; }
+            .calendar-events {
+                flex: none; max-height: 240px;
+                padding-left: 0; padding-top: 10px;
+                border-left: none;
+                border-top: 1px solid var(--divider);
+            }
+
             .page { height: auto; min-height: 100dvh; overflow-y: auto; }
             .charts-row { flex: none; min-height: auto; }
             .chart-card { min-height: 200px; }
@@ -1880,7 +1975,10 @@
                         </div>
                     </div>
                     <div class="panel" style="flex:1;overflow:hidden;padding:12px 16px;">
-                        <div id="fullCalendar"></div>
+                        <div class="calendar-layout">
+                            <div id="fullCalendar"></div>
+                            <div class="calendar-events" id="calendarEvents"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -2078,7 +2176,12 @@
                 confirm_delete_task: "Supprimer cette tâche ?",
                 confirm_delete_exam: "Supprimer cet examen ?",
                 session_label: "Séance",
-                pause_label: "PAUSE"
+                pause_label: "PAUSE",
+                subject_new_option: "＋ Nouvelle matière…",
+                subject_create: "Créer la matière",
+                toast_select_subject: "Choisis une matière valide",
+                cal_no_events: "Aucun événement ce jour",
+                cal_select_day: "Sélectionne un jour"
             },
             en: {
                 logo_sub: "Intelligence · Organisation · Mastery",
@@ -2236,7 +2339,12 @@
                 confirm_delete_task: "Delete this task?",
                 confirm_delete_exam: "Delete this exam?",
                 session_label: "Session",
-                pause_label: "BREAK"
+                pause_label: "BREAK",
+                subject_new_option: "＋ New subject…",
+                subject_create: "Create subject",
+                toast_select_subject: "Choose a valid subject",
+                cal_no_events: "No events on this day",
+                cal_select_day: "Select a day"
             }
         };
 
@@ -3039,6 +3147,8 @@
         }
 
         function editClass(id) { const cls = data.classes.find(c => c.id === id); if (!cls) return; openModal('class', cls); }
+        function editTask(id) { const tsk = data.tasks.find(x => x.id === id); if (tsk) openModal('task', tsk); }
+        function editExam(id) { const ex = data.exams.find(x => x.id === id); if (ex) openModal('exam', ex); }
         function deleteClass(id) {
             if (!confirm(t('confirm_delete_class'))) return;
             data.classes = data.classes.filter(c => c.id !== id);
@@ -3128,29 +3238,96 @@
 
         let calendarMonth = new Date().getMonth();
         let calendarYear = new Date().getFullYear();
+        let selectedCalendarDate = new Date().toISOString().slice(0, 10);
+
         function renderFullCalendar() {
             const container = document.getElementById('fullCalendar');
+            if (!container) return;
             container.innerHTML = buildCalendarHTML(calendarYear, calendarMonth);
-            document.getElementById('calendarMonthLabel').textContent = new Date(calendarYear, calendarMonth).toLocaleDateString(getLocale(), { month: 'long', year: 'numeric' });
+            document.getElementById('calendarMonthLabel').textContent =
+                new Date(calendarYear, calendarMonth).toLocaleDateString(getLocale(), { month: 'long', year: 'numeric' });
+            renderCalendarEvents();
         }
+
+        function renderCalendarEvents() {
+            const container = document.getElementById('calendarEvents');
+            if (!container) return;
+            const date = selectedCalendarDate;
+            if (!date) {
+                container.innerHTML = `<div class="empty-state"><div class="emoji">🗓</div><p>${t('cal_select_day')}</p></div>`;
+                return;
+            }
+            const dt = new Date(date + 'T00:00:00');
+            const label = dt.toLocaleDateString(getLocale(), { weekday: 'long', day: 'numeric', month: 'long' });
+
+            const exams = data.exams.filter(e => e.date === date)
+                .sort((a, b) => a.name.localeCompare(b.name));
+            const tasks = data.tasks.filter(x => x.due === date)
+                .sort((a, b) => {
+                    if (a.completed !== b.completed) return a.completed ? 1 : -1;
+                    const pa = getTaskPriority(a.comprehension), pb = getTaskPriority(b.comprehension);
+                    const order = { high: 0, medium: 1, low: 2 };
+                    return order[pa] - order[pb];
+                });
+
+            let html = `<div class="cal-events-header">${label}</div>`;
+
+            if (exams.length === 0 && tasks.length === 0) {
+                html += `<div class="empty-state"><div class="emoji">🌙</div><p>${t('cal_no_events')}</p></div>`;
+            } else {
+                if (exams.length) {
+                    html += `<div class="cal-events-group"><div class="cal-events-title"><span>▣</span>${t('nav_exams')}</div>`;
+                    exams.forEach(ex => {
+                        html += `<div class="cal-event exam" onclick="editExam('${ex.id}')" title="${t('form_exam_edit')}">
+                            <span class="ce-dot" style="background:var(--accent-secondary);"></span>
+                            <span class="ce-name">${ex.name}</span>
+                            <span class="ce-meta">${ex.progress}%</span>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+                if (tasks.length) {
+                    html += `<div class="cal-events-group"><div class="cal-events-title"><span>✓</span>${t('nav_homework')}</div>`;
+                    tasks.forEach(tsk => {
+                        const checked = tsk.completed ? 'checked' : '';
+                        const done = tsk.completed ? 'done' : '';
+                        html += `<div class="cal-event task">
+                            <div class="task-check ${checked}" onclick="toggleTask('${tsk.id}')">✓</div>
+                            <span class="ce-name ${done}" onclick="editTask('${tsk.id}')" title="${t('form_task_edit')}">${tsk.name}</span>
+                            <span class="ce-meta">${getSubjectName(tsk.subjectId)}</span>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+            }
+            container.innerHTML = html;
+        }
+
         function buildCalendarHTML(year, month) {
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const today = new Date().toISOString().slice(0, 10);
-            const examDates = data.exams.map(e => e.date);
+            const examDates = new Set(data.exams.map(e => e.date));
+            const taskDates = new Set(data.tasks.filter(x => x.due).map(x => x.due));
+
             let html = `<div class="calendar-grid">`;
             const headers = [t('cal_lun'), t('cal_mar'), t('cal_mer'), t('cal_jeu'), t('cal_ven'), t('cal_sam'), t('cal_dim')];
             headers.forEach(h => { html += `<div class="cal-day header">${h}</div>`; });
+
             const offset = firstDay === 0 ? 6 : firstDay - 1;
             const prevMonthDays = new Date(year, month, 0).getDate();
             for (let i = offset - 1; i >= 0; i--) html += `<div class="cal-day empty-cell">${prevMonthDays - i}</div>`;
+
             for (let d = 1; d <= daysInMonth; d++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 let cls = 'cal-day';
                 if (dateStr === today) cls += ' active';
-                if (examDates.includes(dateStr)) cls += ' has-exam';
-                html += `<div class="${cls}">${d}</div>`;
+                if (dateStr === selectedCalendarDate) cls += ' selected';
+                if (examDates.has(dateStr)) cls += ' has-exam';
+                if (taskDates.has(dateStr)) cls += ' has-task';
+                html += `<div class="${cls}" data-date="${dateStr}">${d}</div>`;
             }
+
             const totalCells = offset + daysInMonth;
             const remaining = (7 - (totalCells % 7)) % 7;
             for (let i = 1; i <= remaining; i++) html += `<div class="cal-day empty-cell">${i}</div>`;
@@ -3166,6 +3343,74 @@
 
         let modalMode = 'task';
         let modalEditId = null;
+
+        /* ---- Champ "matière" avec création à la volée (utilisable partout) ---- */
+        function subjectFieldHTML(selectId, inlineId, selectedId) {
+            const colorOptions = ['green', 'blue', 'orange', 'red', 'purple', 'teal', 'pink'];
+            const sem1 = currentLang === 'fr' ? 'Semestre 1' : 'Semester 1';
+            const sem2 = currentLang === 'fr' ? 'Semestre 2' : 'Semester 2';
+            return `
+                <div class="form-group">
+                    <label>${t('form_subject')}</label>
+                    <select id="${selectId}" class="subject-select" data-inline="${inlineId}">
+                        ${data.subjects.map(s => `<option value="${s.id}" ${s.id === selectedId ? 'selected' : ''}>${s.name}</option>`).join('')}
+                        <option value="__new__">${t('subject_new_option')}</option>
+                    </select>
+                    <div class="new-subject-inline" id="${inlineId}" style="display:none;">
+                        <input type="text" class="ns-name" placeholder="${t('form_name_placeholder')}" autocomplete="off" />
+                        <div class="form-row" style="margin-top:6px;">
+                            <input type="number" class="ns-credits" value="3" min="1" max="30" title="${t('form_coef')}" placeholder="${t('form_coef')}" />
+                            <select class="ns-semester">
+                                <option value="1">${sem1}</option>
+                                <option value="2">${sem2}</option>
+                            </select>
+                        </div>
+                        <div class="form-row" style="margin-top:6px;">
+                            <select class="ns-color">
+                                ${colorOptions.map(c => `<option value="${c}">${c}</option>`).join('')}
+                            </select>
+                            <button type="button" class="primary-btn ns-create">${t('subject_create')}</button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function wireSubjectFields(scope) {
+            scope.querySelectorAll('.subject-select').forEach(sel => {
+                const inline = scope.querySelector('#' + sel.dataset.inline);
+                if (!inline) return;
+                sel.addEventListener('change', () => {
+                    if (sel.value === '__new__') {
+                        inline.style.display = 'block';
+                        const n = inline.querySelector('.ns-name');
+                        if (n) setTimeout(() => n.focus(), 50);
+                    } else {
+                        inline.style.display = 'none';
+                    }
+                });
+                inline.querySelector('.ns-create').addEventListener('click', () => {
+                    const name = inline.querySelector('.ns-name').value.trim();
+                    const credits = parseInt(inline.querySelector('.ns-credits').value, 10) || 3;
+                    const semester = parseInt(inline.querySelector('.ns-semester').value, 10) || 1;
+                    const color = inline.querySelector('.ns-color').value;
+                    if (!name) { showToast(t('toast_enter_name')); return; }
+                    const newSubject = { id: genId(), name, color, credits: Math.max(1, credits), semester, oral: null, ds: null, exam: null };
+                    data.subjects.push(newSubject);
+                    persist();
+                    const opt = document.createElement('option');
+                    opt.value = newSubject.id;
+                    opt.textContent = newSubject.name;
+                    sel.insertBefore(opt, sel.querySelector('option[value="__new__"]'));
+                    sel.value = newSubject.id;
+                    inline.style.display = 'none';
+                    inline.querySelector('.ns-name').value = '';
+                    renderAll();
+                    showToast(t('toast_subject_added'));
+                });
+            });
+        }
+        /* ---------------------------------------------------------------------- */
+
         function openModal(mode, preset = null) {
             modalMode = mode;
             modalEditId = null;
@@ -3181,7 +3426,7 @@
                 const comp = tsk.comprehension !== undefined ? tsk.comprehension : 5;
                 html = `
                     <div class="form-group"><label>${t('form_name')}</label><input type="text" id="f_taskName" value="${tsk.name || ''}" placeholder="${t('form_name_placeholder')}"></div>
-                    <div class="form-group"><label>${t('form_subject')}</label><select id="f_taskSubject">${data.subjects.map(s => `<option value="${s.id}" ${s.id === tsk.subjectId ? 'selected' : ''}>${s.name}</option>`).join('')}</select></div>
+                    ${subjectFieldHTML('f_taskSubject', 'newSubj_task', tsk.subjectId)}
                     <div class="form-group"><label>${t('form_due')}</label><input type="date" id="f_taskDue" value="${tsk.due || ''}"></div>
                     <div class="form-group"><label>${t('form_comprehension')}</label>
                         <input type="number" id="f_taskComp" value="${comp}" min="0" max="10" step="1" />
@@ -3216,7 +3461,7 @@
                             <option value="180" ${duration === 180 ? 'selected' : ''}>3h (3 sessions)</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>${t('form_subject')}</label><select id="f_classSubject">${data.subjects.map(s => `<option value="${s.id}" ${s.id === c.subjectId ? 'selected' : ''}>${s.name}</option>`).join('')}</select></div>
+                    ${subjectFieldHTML('f_classSubject', 'newSubj_class', c.subjectId)}
                     <div class="form-group"><label>${t('form_color')}</label><select id="f_classColor">${['green', 'blue', 'orange', 'red', 'purple', 'teal', 'pink'].map(col => `<option value="${col}" ${col === c.color ? 'selected' : ''}>${col}</option>`).join('')}</select></div>`;
                 submit.textContent = (preset && preset.id) ? t('modal_update') : t('modal_add');
                 if (preset && preset.id) modalEditId = preset.id;
@@ -3225,7 +3470,7 @@
                 const e = preset || {};
                 html = `
                     <div class="form-group"><label>${t('form_name')}</label><input type="text" id="f_examName" value="${e.name || ''}" placeholder="e.g. Gestion"></div>
-                    <div class="form-group"><label>${t('form_subject')}</label><select id="f_examSubject">${data.subjects.map(s => `<option value="${s.id}" ${s.id === e.subjectId ? 'selected' : ''}>${s.name}</option>`).join('')}</select></div>
+                    ${subjectFieldHTML('f_examSubject', 'newSubj_exam', e.subjectId)}
                     <div class="form-group"><label>${currentLang === 'fr' ? 'Date' : 'Date'}</label><input type="date" id="f_examDate" value="${e.date || ''}"></div>
                     <div class="form-group"><label>${t('form_exam_progress')}</label><input type="number" id="f_examProgress" value="${e.progress || 0}" min="0" max="100"></div>`;
                 submit.textContent = preset ? t('modal_update') : t('modal_add');
@@ -3248,6 +3493,7 @@
             }
 
             body.innerHTML = html;
+            wireSubjectFields(body);
             overlay.classList.add('show');
             submit.onclick = function () { handleModalSubmit(); };
             const firstInput = body.querySelector('input');
@@ -3264,6 +3510,7 @@
             if (modalMode === 'task') {
                 const name = document.getElementById('f_taskName').value.trim();
                 const subjectId = document.getElementById('f_taskSubject').value;
+                if (!getSubject(subjectId)) { showToast(t('toast_select_subject')); return; }
                 const due = document.getElementById('f_taskDue').value;
                 const comp = parseInt(document.getElementById('f_taskComp').value) || 5;
                 if (!name) { showToast(t('toast_enter_name')); return; }
@@ -3280,6 +3527,7 @@
                 const time = document.getElementById('f_classTime').value;
                 const duration = parseInt(document.getElementById('f_classDuration').value) || 90;
                 const subjectId = document.getElementById('f_classSubject').value;
+                if (!getSubject(subjectId)) { showToast(t('toast_select_subject')); return; }
                 const color = document.getElementById('f_classColor').value;
                 if (!name) { showToast(t('toast_enter_class_name')); return; }
                 if (modalEditId) {
@@ -3303,6 +3551,7 @@
             } else if (modalMode === 'exam') {
                 const name = document.getElementById('f_examName').value.trim();
                 const subjectId = document.getElementById('f_examSubject').value;
+                if (!getSubject(subjectId)) { showToast(t('toast_select_subject')); return; }
                 const date = document.getElementById('f_examDate').value;
                 const progress = parseInt(document.getElementById('f_examProgress').value) || 0;
                 if (!name) { showToast(t('toast_enter_name')); return; }
@@ -3344,6 +3593,17 @@
         updateThemeToggleUI();
         initWelcome();
         renderAll();
+
+        /* Clic sur un jour du calendrier -> affiche les événements du jour */
+        const calEl = document.getElementById('fullCalendar');
+        if (calEl) {
+            calEl.addEventListener('click', function (e) {
+                const cell = e.target.closest('.cal-day[data-date]');
+                if (!cell) return;
+                selectedCalendarDate = cell.dataset.date;
+                renderFullCalendar();
+            });
+        }
 
         const wrapper = document.getElementById('pageWrapper');
         wrapper.style.transform = 'translateX(0)';
