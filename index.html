@@ -320,15 +320,15 @@ button { cursor: pointer; border: none; background: none; }
   transition: background-color 0.4s ease, border-color 0.3s ease, color 0.3s ease;
 }
 .theme-toggle:hover, .lang-toggle:hover { border-color: var(--accent-primary); color: var(--text); background: var(--surface-3); }
-.theme-toggle .tt-*****, .lang-toggle .tt-***** {
+.theme-toggle .tt-icon-circle, .lang-toggle .tt-icon-circle {
   width: 22px; height: 22px; border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   color: #FFFFFF; display: grid; place-items: center; font-size: 12px; line-height: 1;
   box-shadow: 0 0 20px rgba(96, 165, 250, 0.35);
 }
-.lang-toggle .tt-***** { background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary)); }
-[data-theme="light"] .theme-toggle .tt-***** { background: linear-gradient(135deg, #1E40AF, #7C3AED); }
-[data-theme="light"] .lang-toggle .tt-***** { background: linear-gradient(135deg, #0891B2, #2563EB); }
+.lang-toggle .tt-icon-circle { background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary)); }
+[data-theme="light"] .theme-toggle .tt-icon-circle { background: linear-gradient(135deg, #1E40AF, #7C3AED); }
+[data-theme="light"] .lang-toggle .tt-icon-circle { background: linear-gradient(135deg, #0891B2, #2563EB); }
 .theme-toggle .tt-label, .lang-toggle .tt-label { font-size: 9px; }
 
 .install-btn-top {
@@ -722,21 +722,20 @@ button { cursor: pointer; border: none; background: none; }
 .moy-summary-card .sub .validated { color: var(--accent-green-text); font-weight: 700; }
 .moy-semester { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px 6px; margin-bottom: 12px; box-shadow: var(--shadow); }
 .moy-semester:last-child { margin-bottom: 0; }
-.semester-title { font-family: var(--font-serif); font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.semester-title { font-family: var(--font-serif); font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .semester-title .badge { font-family: var(--font-sans); font-size: 8px; padding: 1px 8px; border-radius: 20px; background: var(--badge-primary-bg); color: var(--accent-primary-text); font-weight: 600; }
 .moy-table-wrap { overflow-x: auto; margin: 0 -4px; padding: 0 4px 2px; }
 .moy-table-wrap::-webkit-scrollbar { height: 4px; }
 .moy-table-wrap::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
 .moy-header, .moy-row {
   display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 0.6fr) minmax(0, 0.6fr) 22px;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 0.6fr) minmax(0, 0.55fr) 22px;
   gap: 6px;
   align-items: center;
   width: 100%;
 }
 .moy-header { padding: 4px 8px; font-size: 8px; font-weight: 700; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
-.moy-header > span:nth-child(n+2):nth-child(-n+5) { text-align: center; }
-.moy-header > span:nth-child(6) { text-align: center; }
+.moy-header > span:nth-child(n+2):nth-child(-n+6) { text-align: center; }
 .moy-row { padding: 5px 8px; border-bottom: 1px solid var(--divider); }
 .moy-row:last-child { border-bottom: none; }
 .moy-row:hover { background: var(--surface-1); }
@@ -753,6 +752,7 @@ button { cursor: pointer; border: none; background: none; }
 .moy-avg.good { background: var(--badge-green-bg); color: var(--accent-green-text); }
 .moy-avg.bad  { background: var(--badge-primary-bg); color: var(--accent-primary-text); }
 .moy-avg.empty { background: var(--surface-1); color: var(--muted); }
+.moy-coef-display { text-align: center; font-family: var(--font-sans); font-size: 11px; font-weight: 700; padding: 4px 4px; border-radius: 8px; background: var(--surface-1); color: var(--accent-secondary-text); border: 1px solid var(--surface-2); }
 .moy-del { color: var(--muted); font-size: 11px; cursor: pointer; padding: 2px 5px; border-radius: 20px; text-align: center; background: none; }
 .moy-del:hover { background: var(--badge-primary-bg); color: var(--accent-primary-text); }
 .modal-overlay { position: fixed; inset: 0; background: rgba(7, 11, 20, 0.75); backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
@@ -840,11 +840,12 @@ button { cursor: pointer; border: none; background: none; }
 
   .moy-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
   .moy-header, .moy-row {
-    grid-template-columns: minmax(90px, 1.2fr) 36px 36px 36px 32px 32px 18px;
+    grid-template-columns: minmax(90px, 1.2fr) 34px 34px 34px 30px 28px 18px;
     gap: 2px;
-    min-width: 290px;
+    min-width: 280px;
   }
   .moy-input { padding: 3px 1px; font-size: 10px; }
+  .moy-coef-display { font-size: 10px; padding: 3px 2px; }
 
   .week-header   { grid-template-columns: 38px repeat(6, minmax(0, 1fr)); gap: 3px; }
   .schedule-grid { grid-template-columns: 38px repeat(6, minmax(0, 1fr)); gap: 3px; }
@@ -996,11 +997,11 @@ button { cursor: pointer; border: none; background: none; }
       <div class="nav-label"></div>
       <div class="sidebar-controls">
         <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Theme">
-          <span class="tt-*****"><span class="tt-icon" id="themeIcon">☾</span></span>
+          <span class="tt-icon-circle"><span class="tt-icon" id="themeIcon">☾</span></span>
           <span class="tt-label" id="themeLabel">Nuit</span>
         </button>
         <button class="lang-toggle" type="button" onclick="toggleLanguage()" aria-label="Language">
-          <span class="tt-*****">🌐</span>
+          <span class="tt-icon-circle">🌐</span>
           <span class="tt-label" id="langLabel">FR</span>
         </button>
       </div>
@@ -1353,7 +1354,7 @@ const TRANSLATIONS = {
     form_exam_new: "Nouvel examen", form_exam_edit: "Modifier l'examen", form_exam_progress: "Progression (%)",
     form_subject_new: "Nouvelle matière", form_subject_edit: "Modifier la matière",
     form_coef: "Coefficient", form_credits: "Crédits (ECTS)", form_semester: "Semestre",
-    form_subject_hint: "💡 Notes (Oral 10%, DS 20%, Examen 70%) à saisir dans le module Moyenne. ✅ Crédits validés si moyenne ≥ 10.",
+    form_subject_hint: "💡 Crédits = validation ECTS · Coefficient = pondération dans la moyenne. Les notes (Oral 10%, DS 20%, Examen 70%) se saisissent dans le module Moyenne.",
     cal_lun: "Lun", cal_mar: "Mar", cal_mer: "Mer", cal_jeu: "Jeu", cal_ven: "Ven", cal_sam: "Sam", cal_dim: "Dim",
     toast_theme_day: "Mode jour activé ☀", toast_theme_night: "Mode nuit activé ☾",
     toast_objective: "Objectif :", toast_invalid_grade: "Note invalide (0-20)",
@@ -1424,7 +1425,7 @@ const TRANSLATIONS = {
     form_exam_new: "New exam", form_exam_edit: "Edit exam", form_exam_progress: "Progress (%)",
     form_subject_new: "New subject", form_subject_edit: "Edit subject",
     form_coef: "Coefficient", form_credits: "Credits (ECTS)", form_semester: "Semester",
-    form_subject_hint: "💡 Grades (Oral 10%, Test 20%, Exam 70%) to enter in the Average module. ✅ Credits validated if average ≥ 10.",
+    form_subject_hint: "💡 Credits = ECTS validation · Coefficient = weight in the average. Grades (Oral 10%, Test 20%, Exam 70%) are entered in the Average module.",
     cal_lun: "Mon", cal_mar: "Tue", cal_mer: "Wed", cal_jeu: "Thu", cal_ven: "Fri", cal_sam: "Sat", cal_dim: "Sun",
     toast_theme_day: "Day mode on ☀", toast_theme_night: "Night mode on ☾",
     toast_objective: "Goal:", toast_invalid_grade: "Invalid grade (0-20)",
@@ -1614,7 +1615,7 @@ function getThemePalette() {
 }
 
 const WEIGHTS = { oral: 0.10, ds: 0.20, exam: 0.70 };
-const STORAGE_KEY_BASE = 'univa_data_v7';
+const STORAGE_KEY_BASE = 'univa_data_v8';
 const USER_KEY = 'univa_user';
 let userName = localStorage.getItem(USER_KEY) || '';
 
@@ -1623,60 +1624,74 @@ function getStorageKey() {
   return STORAGE_KEY_BASE + '_' + u;
 }
 
+/* ============================================================
+   DONNÉES PAR DÉFAUT
+   ⚠️  CRÉDITS (ECTS) et COEFFICIENTS sont DEUX CHOSES DIFFÉRENTES :
+       - credits : validation ECTS (30 par semestre)
+       - coef    : pondération dans la moyenne (15 par semestre)
+   ============================================================ */
 function getDefaultData() {
-  const subj = (id, name, color, credits, coef, semester) => ({ id, name, color, credits, coef, semester, oral: null, ds: null, exam: null });
+  // subj(id, nom, couleur, CRÉDITS, COEFFICIENT, semestre)
+  const subj = (id, name, color, credits, coef, semester) => ({
+    id, name, color, credits, coef, semester, oral: null, ds: null, exam: null
+  });
+
   return {
     subjects: [
-      // Semestre 1 (Anciennes données conservées pour compatibilité)
-      subj('s1', 'Fondamentaux du Management', 'blue', 5, 2.5, 1),
-      subj('s2', 'Comptabilité de Gestion', 'green', 5, 2.5, 1),
-      subj('s3', 'Fondamentaux du Marketing', 'orange', 5, 2.5, 1),
-      subj('s4', 'Activité Pratique', 'teal', 5, 2.5, 1),
-      subj('s5', 'Compétence Entrepreneuriales', 'purple', 3, 1.5, 1),
-      subj('s6', 'Compétence Linguistiques', 'pink', 2, 1, 1),
-      subj('s7', 'Fiscalité', 'red', 3, 1.5, 1),
-      subj('s8', 'Statistique Inférentielle', 'teal', 2, 1, 1),
-      // Semestre 2 (Anciennes données conservées pour compatibilité)
-      subj('s9', 'Fondamentaux de la GRH', 'blue', 5, 2.5, 2),
-      subj('s10', 'Diagnostic Financier', 'green', 5, 2.5, 2),
-      subj('s11', 'Gestion de la Production', 'orange', 5, 2.5, 2),
-      subj('s12', 'Méthodologie Rapport de Stage', 'purple', 5, 2.5, 2),
-      subj('s13', 'Compétence Entrepreneuriales', 'purple', 3, 1.5, 2),
-      subj('s14', 'Compétence Linguistiques', 'pink', 2, 1, 2),
-      subj('s15', 'Recherche Opérationnelle', 'red', 2, 1, 2),
-      subj('s16', 'Finance de Marché / Étude de Marché', 'teal', 3, 1.5, 2),
-      // Semestre 3 (Nouvelles données extraites de l'image)
-      subj('s3_1', 'Management (Fondamentaux du Management)', 'blue', 5, 2.5, 3),
-      subj('s3_2', 'Comptabilité de Gestion', 'green', 5, 2.5, 3),
-      subj('s3_3', 'Marketing (Fondamentaux du Marketing)', 'orange', 5, 2.5, 3),
-      subj('s3_4', 'Activité Pratique', 'teal', 5, 2.5, 3),
-      subj('s3_5', 'Compétence Entrepreneuriales', 'purple', 3, 1.5, 3),
-      subj('s3_6', 'Compétence Linguistiques', 'pink', 2, 1, 3),
-      subj('s3_7', 'Fiscalité', 'red', 3, 1.5, 3),
-      subj('s3_8', 'Statistique Inférentielle', 'teal', 2, 1, 3),
-      // Semestre 4 (Nouvelles données extraites de l'image)
-      subj('s4_1', 'Fondamentaux de la GRH', 'blue', 5, 2.5, 4),
-      subj('s4_2', 'Diagnostic Financier', 'green', 5, 2.5, 4),
-      subj('s4_3', 'Gestion de la Production', 'orange', 5, 2.5, 4),
-      subj('s4_4', 'Méthodologie d\'Elaboration d\'un Rapport de Stage', 'purple', 5, 2.5, 4),
-      subj('s4_5', 'Compétence Entrepreneuriales', 'purple', 3, 1.5, 4),
-      subj('s4_6', 'Compétence Linguistiques', 'pink', 2, 1, 4),
-      subj('s4_7', 'Recherche Opérationnelle', 'red', 2, 1, 4),
-      subj('s4_8', 'Microéconomie des marchés', 'teal', 2, 1, 4),
-      subj('s4_9', 'Introduction à la finance de marché / Etude de Marché', 'blue', 3, 1.5, 4),
+      /* ==================== SEMESTRE 1 ==================== */
+      subj('s1_1', 'Fondamentaux du Management',  'blue',   5, 2.5, 1),
+      subj('s1_2', 'Comptabilité de Gestion',      'green',  5, 2.5, 1),
+      subj('s1_3', 'Fondamentaux du Marketing',    'orange', 5, 2.5, 1),
+      subj('s1_4', 'Activité Pratique',            'teal',   5, 2.5, 1),
+      subj('s1_5', 'Compétence Entrepreneuriales', 'purple', 3, 1.5, 1),
+      subj('s1_6', 'Compétence Linguistiques',     'pink',   2, 1,   1),
+      subj('s1_7', 'Fiscalité',                    'red',    3, 1.5, 1),
+      subj('s1_8', 'Statistique Inférentielle',    'teal',   2, 1,   1),
+
+      /* ==================== SEMESTRE 2 ==================== */
+      subj('s2_1', 'Fondamentaux de la GRH',              'blue',   5, 2.5, 2),
+      subj('s2_2', 'Diagnostic Financier',                'green',  5, 2.5, 2),
+      subj('s2_3', 'Gestion de la Production',            'orange', 5, 2.5, 2),
+      subj('s2_4', 'Méthodologie Rapport de Stage',       'purple', 5, 2.5, 2),
+      subj('s2_5', 'Compétence Entrepreneuriales',        'purple', 3, 1.5, 2),
+      subj('s2_6', 'Compétence Linguistiques',            'pink',   2, 1,   2),
+      subj('s2_7', 'Recherche Opérationnelle',            'red',    2, 1,   2),
+      subj('s2_8', 'Finance de Marché / Étude de Marché', 'teal',   3, 1.5, 2),
+
+      /* ==================== SEMESTRE 3 ==================== */
+      // Total : 30 crédits / 15 coef
+      subj('s3_1', 'Fondamentaux du Management',  'blue',   5, 2.5, 3),
+      subj('s3_2', 'Comptabilité de Gestion',     'green',  5, 2.5, 3),
+      subj('s3_3', 'Fondamentaux du Marketing',   'orange', 5, 2.5, 3),
+      subj('s3_4', 'Activité Pratique',           'teal',   5, 2.5, 3),
+      subj('s3_5', 'Compétence Entrepreneuriales','purple', 3, 1.5, 3),
+      subj('s3_6', 'Compétence Linguistiques',    'pink',   2, 1,   3),
+      subj('s3_7', 'Fiscalité',                   'red',    3, 1.5, 3),
+      subj('s3_8', 'Statistique Inférentielle',   'teal',   2, 1,   3),
+
+      /* ==================== SEMESTRE 4 ==================== */
+      // Total : 30 crédits / 15 coef
+      subj('s4_1', 'Fondamentaux de la GRH',                                'blue',   5, 2.5, 4),
+      subj('s4_2', 'Diagnostic Financier',                                  'green',  5, 2.5, 4),
+      subj('s4_3', 'Gestion de la Production',                              'orange', 5, 2.5, 4),
+      subj('s4_4', 'Méthodologie d\'Elaboration d\'un Rapport de Stage',    'purple', 5, 2.5, 4),
+      subj('s4_5', 'Compétence Entrepreneuriales',                          'purple', 3, 1.5, 4),
+      subj('s4_6', 'Compétence Linguistiques',                              'pink',   2, 1,   4),
+      subj('s4_7', 'Recherche Opérationnelle / Microéconomie des marchés',  'red',    2, 1,   4),
+      subj('s4_8', 'Introduction à la finance de marché / Étude de Marché', 'teal',   3, 1.5, 4)
     ],
     classes: [],
     tasks: [
-      { id: 't1', name: 'Préparer le dossier de management', subjectId: 's3_1', due: '2026-09-12', completed: false, comprehension: 6 },
+      { id: 't1', name: 'Préparer le dossier de management',    subjectId: 's3_1', due: '2026-09-12', completed: false, comprehension: 6 },
       { id: 't2', name: 'Exercices de comptabilité de gestion', subjectId: 's3_2', due: '2026-09-10', completed: false, comprehension: 4 },
-      { id: 't3', name: 'Lecture chapitre 3 Marketing', subjectId: 's3_3', due: '2026-09-08', completed: false, comprehension: 8 },
-      { id: 't4', name: 'Rapport d\'activité pratique', subjectId: 's3_4', due: '2026-09-15', completed: false, comprehension: 7 },
-      { id: 't5', name: 'Révision fiscalité (TVA)', subjectId: 's3_7', due: '2026-09-09', completed: false, comprehension: 3 },
+      { id: 't3', name: 'Lecture chapitre 3 Marketing',         subjectId: 's3_3', due: '2026-09-08', completed: false, comprehension: 8 },
+      { id: 't4', name: 'Rapport d\'activité pratique',         subjectId: 's3_4', due: '2026-09-15', completed: false, comprehension: 7 },
+      { id: 't5', name: 'Révision fiscalité (TVA)',             subjectId: 's3_7', due: '2026-09-09', completed: false, comprehension: 3 }
     ],
     exams: [
-      { id: 'e1', name: 'Management S3', subjectId: 's3_1', date: '2026-10-15', progress: 40 },
-      { id: 'e2', name: 'Comptabilité S3', subjectId: 's3_2', date: '2026-10-18', progress: 30 },
-      { id: 'e3', name: 'Marketing S3', subjectId: 's3_3', date: '2026-10-22', progress: 25 },
+      { id: 'e1', name: 'Management S3',    subjectId: 's3_1', date: '2026-10-15', progress: 40 },
+      { id: 'e2', name: 'Comptabilité S3',  subjectId: 's3_2', date: '2026-10-18', progress: 30 },
+      { id: 'e3', name: 'Marketing S3',     subjectId: 's3_3', date: '2026-10-22', progress: 25 }
     ]
   };
 }
@@ -1691,7 +1706,8 @@ function loadData() {
       for (const k in def) { if (!(k in parsed)) parsed[k] = def[k]; }
       parsed.subjects.forEach(s => {
         if (s.credits === undefined) s.credits = 3;
-        if (s.coef === undefined) s.coef = s.credits || 3; // Migration : coef = credits si non défini
+        // ⚠️ Le coefficient est INDÉPENDANT des crédits — on ne copie JAMAIS credits → coef
+        if (s.coef === undefined || s.coef === null) s.coef = 1;
         if (s.semester === undefined) s.semester = 1;
         if (s.grade !== undefined) { if (s.exam === undefined || s.exam === null) s.exam = s.grade; delete s.grade; }
         if (s.td !== undefined) { if (s.ds === undefined || s.ds === null) s.ds = s.td; delete s.td; }
@@ -1724,13 +1740,16 @@ function subjectAverage(s) {
 function isSubjectValidated(s) { const avg = subjectAverage(s); return avg !== null && avg >= 10; }
 function avgClass(avg) { if (avg === null) return 'empty'; return avg >= 10 ? 'good' : 'bad'; }
 
+/* Coefficient d'une matière : utilise coef, sinon 1 par défaut */
+function getSubjectCoef(s) { return (s.coef !== undefined && s.coef !== null) ? s.coef : 1; }
+
 const SESSIONS = [
   { id: 1, start: '08:15', end: '09:45', label: 'Séance 1' },
   { id: 2, start: '09:50', end: '11:20', label: 'Séance 2' },
   { id: 3, start: '11:25', end: '12:55', label: 'Séance 3' },
   { id: 4, start: '13:30', end: '15:00', label: 'Séance 4' },
   { id: 5, start: '15:05', end: '16:35', label: 'Séance 5' },
-  { id: 6, start: '16:40', end: '18:10', label: 'Séance 6' },
+  { id: 6, start: '16:40', end: '18:10', label: 'Séance 6' }
 ];
 const PAUSE = { start: '12:55', end: '13:30', label: 'PAUSE' };
 
@@ -1886,12 +1905,17 @@ function renderAll() {
   updateAllStats();
 }
 
+/* ============================================================
+   CALCULS — CRÉDITS vs COEFFICIENTS
+   - La MOYENNE utilise les COEFFICIENTS (Σ avg×coef ÷ Σ coef)
+   - La VALIDATION DES CRÉDITS utilise les CRÉDITS ECTS
+   ============================================================ */
 function calculateGPA() {
   const complete = data.subjects.filter(isSubjectComplete);
   if (complete.length === 0) return null;
   let totalCoef = 0, weighted = 0;
   complete.forEach(s => {
-    const coef = s.coef !== undefined ? s.coef : (s.credits || 3);
+    const coef = getSubjectCoef(s);
     totalCoef += coef;
     weighted += subjectAverage(s) * coef;
   });
@@ -2017,32 +2041,39 @@ function renderDonutChart() {
   `;
 }
 
+/* Calcule les statistiques par semestre + global.
+   - avg   : moyenne pondérée par COEFFICIENTS
+   - totalCr / validatedCr : CRÉDITS ECTS */
 function computeMoyenneStats() {
   const complete = data.subjects.filter(isSubjectComplete);
-  let totalWeighted = 0, gradedCoef = 0, validatedCredits = 0;
+  let totalWeighted = 0, gradedCoef = 0, validatedCredits = 0, totalCreditsAll = 0;
   complete.forEach(s => {
-    const cr = s.credits || 3;
-    const coef = s.coef !== undefined ? s.coef : cr;
+    const coef = getSubjectCoef(s);
     const avg = subjectAverage(s);
     totalWeighted += avg * coef;
     gradedCoef += coef;
-    if (avg >= 10) validatedCredits += cr;
+    if (avg >= 10) validatedCredits += (s.credits || 3);
   });
+  data.subjects.forEach(s => { totalCreditsAll += (s.credits || 3); });
   const general = gradedCoef > 0 ? totalWeighted / gradedCoef : null;
+
   function semStats(sem) {
     const subs = data.subjects.filter(s => s.semester === sem);
     const completeSubs = subs.filter(isSubjectComplete);
     const totalCr = subs.reduce((sum, s) => sum + (s.credits || 3), 0);
-    const gradedCoef = completeSubs.reduce((sum, s) => sum + (s.coef !== undefined ? s.coef : (s.credits || 3)), 0);
+    const gradedCoefSum = completeSubs.reduce((sum, s) => sum + getSubjectCoef(s), 0);
     const validatedCr = completeSubs.filter(s => subjectAverage(s) >= 10).reduce((sum, s) => sum + (s.credits || 3), 0);
     let w = 0;
-    completeSubs.forEach(s => {
-      const coef = s.coef !== undefined ? s.coef : (s.credits || 3);
-      w += subjectAverage(s) * coef;
-    });
-    return { avg: gradedCoef > 0 ? w / gradedCoef : null, totalCr, gradedCr: gradedCoef, validatedCr };
+    completeSubs.forEach(s => { w += subjectAverage(s) * getSubjectCoef(s); });
+    return { avg: gradedCoefSum > 0 ? w / gradedCoefSum : null, totalCr, gradedCr: gradedCoefSum, validatedCr };
   }
-  return { general, gradedCredits: gradedCoef, validatedCredits, s1: semStats(1), s2: semStats(2), s3: semStats(3), s4: semStats(4) };
+  return {
+    general,
+    gradedCredits: gradedCoef,
+    validatedCredits,
+    totalCreditsAll,
+    s1: semStats(1), s2: semStats(2), s3: semStats(3), s4: semStats(4)
+  };
 }
 
 function renderMoyenne() {
@@ -2051,52 +2082,54 @@ function renderMoyenne() {
   const stats = computeMoyenneStats();
   const general = stats.general;
   const colorMap = getThemePalette();
+
   let html = `<div class="moy-formula">
     <strong>${t('formula_subject')}</strong> = <code>Oral × 0,10</code> + <code>DS × 0,20</code> + <code>Examen × 0,70</code>
     &nbsp;·&nbsp; <strong>${t('formula_general')}</strong> = <code>Σ (avg × coef) ÷ Σ (coef)</code>
     <br><span style="font-size:8.5px;">${t('formula_note')}</span>
   </div>`;
+
   html += `<div class="moy-summary">
     <div class="moy-summary-card primary">
       <div class="lbl">${t('moy_general')}</div>
       <div class="val" id="moyGenAvg">${general !== null ? general.toFixed(2) : '—'}</div>
-      <div class="sub" id="moyGenSub"><span class="validated">${stats.validatedCredits}</span> / ${stats.gradedCredits} ${t('moy_credits_validated')}</div>
-    </div>
-    <div class="moy-summary-card">
-      <div class="lbl">${currentLang === 'fr' ? 'Semestre 1' : 'Semester 1'}</div>
-      <div class="val-sm" id="moyS1Avg">${stats.s1.avg !== null ? stats.s1.avg.toFixed(2) : '—'}</div>
-      <div class="sub" id="moyS1Sub"><span class="validated">${stats.s1.validatedCr}</span> / ${stats.s1.totalCr} ${t('moy_credits_validated')}</div>
-    </div>
-    <div class="moy-summary-card">
-      <div class="lbl">${currentLang === 'fr' ? 'Semestre 2' : 'Semester 2'}</div>
-      <div class="val-sm" id="moyS2Avg">${stats.s2.avg !== null ? stats.s2.avg.toFixed(2) : '—'}</div>
-      <div class="sub" id="moyS2Sub"><span class="validated">${stats.s2.validatedCr}</span> / ${stats.s2.totalCr} ${t('moy_credits_validated')}</div>
-    </div>
-    <div class="moy-summary-card">
-      <div class="lbl">${currentLang === 'fr' ? 'Semestre 3' : 'Semester 3'}</div>
-      <div class="val-sm" id="moyS3Avg">${stats.s3.avg !== null ? stats.s3.avg.toFixed(2) : '—'}</div>
-      <div class="sub" id="moyS3Sub"><span class="validated">${stats.s3.validatedCr}</span> / ${stats.s3.totalCr} ${t('moy_credits_validated')}</div>
-    </div>
-    <div class="moy-summary-card">
-      <div class="lbl">${currentLang === 'fr' ? 'Semestre 4' : 'Semester 4'}</div>
-      <div class="val-sm" id="moyS4Avg">${stats.s4.avg !== null ? stats.s4.avg.toFixed(2) : '—'}</div>
-      <div class="sub" id="moyS4Sub"><span class="validated">${stats.s4.validatedCr}</span> / ${stats.s4.totalCr} ${t('moy_credits_validated')}</div>
-    </div>
-  </div>`;
+      <div class="sub" id="moyGenSub"><span class="validated">${stats.validatedCredits}</span> / ${stats.totalCreditsAll} ${t('moy_credits_validated')}</div>
+    </div>`;
+
+  const semLabels = {
+    1: currentLang === 'fr' ? 'Semestre 1' : 'Semester 1',
+    2: currentLang === 'fr' ? 'Semestre 2' : 'Semester 2',
+    3: currentLang === 'fr' ? 'Semestre 3' : 'Semester 3',
+    4: currentLang === 'fr' ? 'Semestre 4' : 'Semester 4'
+  };
   [1, 2, 3, 4].forEach(semNum => {
-    let sLabel = t('moy_semester1');
-    if (semNum === 2) sLabel = t('moy_semester2');
-    if (semNum === 3) sLabel = t('moy_semester3');
-    if (semNum === 4) sLabel = t('moy_semester4');
+    const sStats = semNum === 1 ? stats.s1 : (semNum === 2 ? stats.s2 : (semNum === 3 ? stats.s3 : stats.s4));
+    html += `<div class="moy-summary-card">
+      <div class="lbl">${semLabels[semNum]}</div>
+      <div class="val-sm" id="moyS${semNum}Avg">${sStats.avg !== null ? sStats.avg.toFixed(2) : '—'}</div>
+      <div class="sub" id="moyS${semNum}Sub"><span class="validated">${sStats.validatedCr}</span> / ${sStats.totalCr} ${t('moy_credits_validated')}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  [1, 2, 3, 4].forEach(semNum => {
+    let sLabel = semNum === 1 ? t('moy_semester1') : semNum === 2 ? t('moy_semester2') : semNum === 3 ? t('moy_semester3') : t('moy_semester4');
     const subs = data.subjects.filter(s => s.semester === semNum);
     const sStats = semNum === 1 ? stats.s1 : (semNum === 2 ? stats.s2 : (semNum === 3 ? stats.s3 : stats.s4));
+
     html += `<div class="moy-semester">
       <div class="semester-title">${sLabel}<span class="badge" id="moySem${semNum}Badge">${sStats.validatedCr}/${sStats.totalCr} ${t('moy_credits_validated')}</span></div>
       <div class="moy-table-wrap">
         <div class="moy-header">
-          <span>${t('moy_subject')}</span><span>${t('moy_oral')}</span><span>${t('moy_ds')}</span><span>${t('moy_exam')}</span>
-          <span style="text-align:center;">${t('moy_avg')}</span><span style="text-align:center;">${t('moy_coef')}</span><span></span>
+          <span>${t('moy_subject')}</span>
+          <span>${t('moy_oral')}</span>
+          <span>${t('moy_ds')}</span>
+          <span>${t('moy_exam')}</span>
+          <span>${t('moy_avg')}</span>
+          <span>${t('moy_coef')}</span>
+          <span></span>
         </div>`;
+
     if (subs.length === 0) {
       html += `<div class="empty-state" style="padding:14px 8px;"><p>${t('moy_no_subjects')}</p></div>`;
     } else {
@@ -2109,24 +2142,27 @@ function renderMoyenne() {
         const oralVal = isFilled(s.oral) ? s.oral : '';
         const dsVal = isFilled(s.ds) ? s.ds : '';
         const examVal = isFilled(s.exam) ? s.exam : '';
-        const coefVal = s.coef !== undefined ? s.coef : (s.credits || 3);
+        const coefVal = getSubjectCoef(s);
+        const creditsVal = s.credits || 3;
+
         html += `<div class="moy-row">
           <span class="moy-name" onclick="editSubject('${s.id}')" title="${t('moy_edit_subject')}">
             <span class="dot" style="background:${color};"></span>
             <span class="moy-name-text">${s.name}</span>
-            <small class="${validated ? 'validated' : ''}">${s.credits || 3} ${t('moy_cr')}${validated ? ' ✓' : ''}</small>
+            <small class="${validated ? 'validated' : ''}">${creditsVal} ${t('moy_cr')}${validated ? ' ✓' : ''}</small>
           </span>
           <input class="moy-input" type="number" min="0" max="20" step="0.25" value="${oralVal}" placeholder="—" data-id="${s.id}" data-field="oral" />
           <input class="moy-input" type="number" min="0" max="20" step="0.25" value="${dsVal}" placeholder="—" data-id="${s.id}" data-field="ds" />
           <input class="moy-input" type="number" min="0" max="20" step="0.25" value="${examVal}" placeholder="—" data-id="${s.id}" data-field="exam" />
           <span class="moy-avg ${cls}" id="avg_${s.id}">${avgDisplay}</span>
-          <span class="moy-avg" style="background:var(--surface-1);color:var(--muted);font-size:11px;">${coefVal}</span>
+          <span class="moy-coef-display">${coefVal}</span>
           <button class="moy-del" onclick="deleteSubject('${s.id}')" title="${t('moy_delete')}">✕</button>
         </div>`;
       });
     }
     html += `</div></div>`;
   });
+
   container.innerHTML = html;
   container.querySelectorAll('.moy-input').forEach(input => {
     input.addEventListener('change', onMoyenneInputChange);
@@ -2163,31 +2199,17 @@ function updateMoyenneSummaryInPlace() {
   const g = document.getElementById('moyGenAvg');
   if (g) g.textContent = stats.general !== null ? stats.general.toFixed(2) : '—';
   const gs = document.getElementById('moyGenSub');
-  if (gs) gs.innerHTML = `<span class="validated">${stats.validatedCredits}</span> / ${stats.gradedCredits} ${t('moy_credits_validated')}`;
-  const s1a = document.getElementById('moyS1Avg');
-  if (s1a) s1a.textContent = stats.s1.avg !== null ? stats.s1.avg.toFixed(2) : '—';
-  const s1s = document.getElementById('moyS1Sub');
-  if (s1s) s1s.innerHTML = `<span class="validated">${stats.s1.validatedCr}</span> / ${stats.s1.totalCr} ${t('moy_credits_validated')}`;
-  const s1b = document.getElementById('moySem1Badge');
-  if (s1b) s1b.textContent = `${stats.s1.validatedCr}/${stats.s1.totalCr} ${t('moy_credits_validated')}`;
-  const s2a = document.getElementById('moyS2Avg');
-  if (s2a) s2a.textContent = stats.s2.avg !== null ? stats.s2.avg.toFixed(2) : '—';
-  const s2s = document.getElementById('moyS2Sub');
-  if (s2s) s2s.innerHTML = `<span class="validated">${stats.s2.validatedCr}</span> / ${stats.s2.totalCr} ${t('moy_credits_validated')}`;
-  const s2b = document.getElementById('moySem2Badge');
-  if (s2b) s2b.textContent = `${stats.s2.validatedCr}/${stats.s2.totalCr} ${t('moy_credits_validated')}`;
-  const s3a = document.getElementById('moyS3Avg');
-  if (s3a) s3a.textContent = stats.s3.avg !== null ? stats.s3.avg.toFixed(2) : '—';
-  const s3s = document.getElementById('moyS3Sub');
-  if (s3s) s3s.innerHTML = `<span class="validated">${stats.s3.validatedCr}</span> / ${stats.s3.totalCr} ${t('moy_credits_validated')}`;
-  const s3b = document.getElementById('moySem3Badge');
-  if (s3b) s3b.textContent = `${stats.s3.validatedCr}/${stats.s3.totalCr} ${t('moy_credits_validated')}`;
-  const s4a = document.getElementById('moyS4Avg');
-  if (s4a) s4a.textContent = stats.s4.avg !== null ? stats.s4.avg.toFixed(2) : '—';
-  const s4s = document.getElementById('moyS4Sub');
-  if (s4s) s4s.innerHTML = `<span class="validated">${stats.s4.validatedCr}</span> / ${stats.s4.totalCr} ${t('moy_credits_validated')}`;
-  const s4b = document.getElementById('moySem4Badge');
-  if (s4b) s4b.textContent = `${stats.s4.validatedCr}/${stats.s4.totalCr} ${t('moy_credits_validated')}`;
+  if (gs) gs.innerHTML = `<span class="validated">${stats.validatedCredits}</span> / ${stats.totalCreditsAll} ${t('moy_credits_validated')}`;
+
+  [1, 2, 3, 4].forEach(semNum => {
+    const sStats = semNum === 1 ? stats.s1 : (semNum === 2 ? stats.s2 : (semNum === 3 ? stats.s3 : stats.s4));
+    const avgEl = document.getElementById(`moyS${semNum}Avg`);
+    if (avgEl) avgEl.textContent = sStats.avg !== null ? sStats.avg.toFixed(2) : '—';
+    const subEl = document.getElementById(`moyS${semNum}Sub`);
+    if (subEl) subEl.innerHTML = `<span class="validated">${sStats.validatedCr}</span> / ${sStats.totalCr} ${t('moy_credits_validated')}`;
+    const badgeEl = document.getElementById(`moySem${semNum}Badge`);
+    if (badgeEl) badgeEl.textContent = `${sStats.validatedCr}/${sStats.totalCr} ${t('moy_credits_validated')}`;
+  });
 }
 
 function editSubject(id) { const s = data.subjects.find(x => x.id === id); if (s) openModal('subject', s); }
@@ -2497,6 +2519,8 @@ function subjectFieldHTML(selectId, inlineId, selectedId) {
   const colorOptions = ['green', 'blue', 'orange', 'red', 'purple', 'teal', 'pink'];
   const sem1 = currentLang === 'fr' ? 'Semestre 1' : 'Semester 1';
   const sem2 = currentLang === 'fr' ? 'Semestre 2' : 'Semester 2';
+  const sem3 = currentLang === 'fr' ? 'Semestre 3' : 'Semester 3';
+  const sem4 = currentLang === 'fr' ? 'Semestre 4' : 'Semester 4';
   return `
     <div class="form-group">
       <label>${t('form_subject')}</label>
@@ -2514,6 +2538,8 @@ function subjectFieldHTML(selectId, inlineId, selectedId) {
           <select class="ns-semester">
             <option value="1">${sem1}</option>
             <option value="2">${sem2}</option>
+            <option value="3">${sem3}</option>
+            <option value="4">${sem4}</option>
           </select>
           <select class="ns-color">
             ${colorOptions.map(c => `<option value="${c}">${c}</option>`).join('')}
@@ -2631,7 +2657,7 @@ function openModal(mode, preset = null) {
     const s = preset || {};
     const sem = s.semester || 1;
     const credits = s.credits || 3;
-    const coef = s.coef !== undefined ? s.coef : credits;
+    const coef = (s.coef !== undefined && s.coef !== null) ? s.coef : 1;
     const sem1Label = currentLang === 'fr' ? 'Semestre 1' : 'Semester 1';
     const sem2Label = currentLang === 'fr' ? 'Semestre 2' : 'Semester 2';
     const sem3Label = currentLang === 'fr' ? 'Semestre 3' : 'Semester 3';
@@ -2765,18 +2791,9 @@ function isStandalone() {
          window.navigator.standalone ||
          document.referrer.includes('android-app://');
 }
-
-function isIOS() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-}
-
-function isAndroid() {
-  return /Android/i.test(navigator.userAgent);
-}
-
-function isMobile() {
-  return isIOS() || isAndroid() || window.innerWidth <= 750;
-}
+function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+function isAndroid() { return /Android/i.test(navigator.userAgent); }
+function isMobile() { return isIOS() || isAndroid() || window.innerWidth <= 750; }
 
 function showInstallUI() {
   if (isStandalone()) return;
@@ -2790,9 +2807,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   showInstallUI();
 });
 
-if (!isStandalone() && isIOS()) {
-  showInstallUI();
-}
+if (!isStandalone() && isIOS()) { showInstallUI(); }
 
 window.addEventListener('appinstalled', () => {
   if (sidebarInstallBtn) sidebarInstallBtn.style.display = 'none';
@@ -2803,21 +2818,15 @@ window.addEventListener('appinstalled', () => {
 
 function handleInstallClick() {
   if (isMobile()) {
-    if (isIOS()) {
-      switchInstallTab('iphone');
-    } else if (isAndroid()) {
-      switchInstallTab('android');
-    }
+    if (isIOS()) switchInstallTab('iphone');
+    else if (isAndroid()) switchInstallTab('android');
     openInstallModal();
     return;
   }
-
   if (deferredPrompt) {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      }
+      if (choiceResult.outcome === 'accepted') console.log('User accepted the install prompt');
       deferredPrompt = null;
     });
   } else {
@@ -2826,23 +2835,14 @@ function handleInstallClick() {
 }
 
 function switchInstallTab(tab) {
-  document.querySelectorAll('.install-tab').forEach(b => {
-    b.classList.toggle('active', b.dataset.tab === tab);
-  });
+  document.querySelectorAll('.install-tab').forEach(b => { b.classList.toggle('active', b.dataset.tab === tab); });
   const androidEl = document.getElementById('installTabAndroid');
   const iphoneEl = document.getElementById('installTabIphone');
   if (androidEl) androidEl.style.display = (tab === 'android') ? 'block' : 'none';
   if (iphoneEl) iphoneEl.style.display = (tab === 'iphone') ? 'block' : 'none';
 }
-
-function openInstallModal() {
-  document.getElementById('installModalOverlay').classList.add('show');
-}
-
-function closeInstallModal() {
-  document.getElementById('installModalOverlay').classList.remove('show');
-}
-
+function openInstallModal() { document.getElementById('installModalOverlay').classList.add('show'); }
+function closeInstallModal() { document.getElementById('installModalOverlay').classList.remove('show'); }
 document.getElementById('installModalOverlay').addEventListener('click', function (e) {
   if (e.target === this) closeInstallModal();
 });
@@ -2856,11 +2856,8 @@ updateThemeToggleUI();
 initWelcome();
 renderAll();
 
-if (isIOS()) {
-  switchInstallTab('iphone');
-} else {
-  switchInstallTab('android');
-}
+if (isIOS()) switchInstallTab('iphone');
+else switchInstallTab('android');
 
 const calEl = document.getElementById('fullCalendar');
 if (calEl) {
@@ -2885,7 +2882,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-console.log('✨ UNIVA · v9.5 · Coefficients ajoutés (S1-S4)');
+console.log('✨ UNIVA · v10 · Crédits & Coefficients séparés (S1-S4)');
 </script>
 </body>
 </html>
