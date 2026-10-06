@@ -712,7 +712,7 @@ button { cursor: pointer; border: none; background: none; }
 .moy-formula { background: var(--badge-tertiary-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; font-size: 9.5px; color: var(--muted); margin-bottom: 12px; text-align: center; line-height: 1.6; }
 .moy-formula strong { color: var(--accent-primary-text); font-weight: 700; }
 .moy-formula code { background: var(--surface-3); padding: 1px 6px; border-radius: 6px; font-size: 9px; color: var(--text); }
-.moy-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; flex-shrink: 0; }
+.moy-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 14px; flex-shrink: 0; }
 .moy-summary-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow); text-align: center; }
 .moy-summary-card.primary { background: var(--badge-primary-bg); }
 .moy-summary-card .lbl { font-size: 8px; color: var(--muted); text-transform: uppercase; }
@@ -1335,7 +1335,6 @@ const TRANSLATIONS = {
     formula_subject: "Moyenne d'une matière", formula_general: "Moyenne générale",
     formula_note: "✅ Les crédits d'une matière sont validés dès que sa moyenne est ≥ 10/20",
     moy_general: "Moyenne générale", moy_semester1: "📘 Semestre 1", moy_semester2: "📗 Semestre 2",
-    moy_semester3: "📙 Semestre 3", moy_semester4: "📕 Semestre 4",
     moy_credits_validated: "crédits validés", moy_subject: "Matière", moy_oral: "Oral · 10%",
     moy_ds: "DS · 20%", moy_exam: "Examen · 70%", moy_avg: "Moyenne", moy_cr: "cr.", moy_coef: "Coef",
     moy_edit_subject: "Modifier la matière", moy_delete: "Supprimer", moy_no_subjects: "Aucune matière dans ce semestre.",
@@ -1406,7 +1405,6 @@ const TRANSLATIONS = {
     formula_subject: "Subject average", formula_general: "Overall average",
     formula_note: "✅ A subject's credits are validated as soon as its average is ≥ 10/20",
     moy_general: "Overall average", moy_semester1: "📘 Semester 1", moy_semester2: "📗 Semester 2",
-    moy_semester3: "📙 Semester 3", moy_semester4: "📕 Semester 4",
     moy_credits_validated: "credits validated", moy_subject: "Subject", moy_oral: "Oral · 10%",
     moy_ds: "Test · 20%", moy_exam: "Exam · 70%", moy_avg: "Average", moy_cr: "cr.", moy_coef: "Coef",
     moy_edit_subject: "Edit subject", moy_delete: "Delete", moy_no_subjects: "No subjects in this semester.",
@@ -1615,7 +1613,7 @@ function getThemePalette() {
 }
 
 const WEIGHTS = { oral: 0.10, ds: 0.20, exam: 0.70 };
-const STORAGE_KEY_BASE = 'univa_data_v8';
+const STORAGE_KEY_BASE = 'univa_data_v9';
 const USER_KEY = 'univa_user';
 let userName = localStorage.getItem(USER_KEY) || '';
 
@@ -1625,10 +1623,8 @@ function getStorageKey() {
 }
 
 /* ============================================================
-   DONNÉES PAR DÉFAUT
-   ⚠️  CRÉDITS (ECTS) et COEFFICIENTS sont DEUX CHOSES DIFFÉRENTES :
-       - credits : validation ECTS (30 par semestre)
-       - coef    : pondération dans la moyenne (15 par semestre)
+   DONNÉES PAR DÉFAUT — 2 SEMESTRES UNIQUEMENT
+   ⚠️  CRÉDITS (ECTS) ≠ COEFFICIENTS
    ============================================================ */
 function getDefaultData() {
   // subj(id, nom, couleur, CRÉDITS, COEFFICIENT, semestre)
@@ -1639,6 +1635,7 @@ function getDefaultData() {
   return {
     subjects: [
       /* ==================== SEMESTRE 1 ==================== */
+      // Total : 30 crédits / 15 coef
       subj('s1_1', 'Fondamentaux du Management',  'blue',   5, 2.5, 1),
       subj('s1_2', 'Comptabilité de Gestion',      'green',  5, 2.5, 1),
       subj('s1_3', 'Fondamentaux du Marketing',    'orange', 5, 2.5, 1),
@@ -1649,49 +1646,28 @@ function getDefaultData() {
       subj('s1_8', 'Statistique Inférentielle',    'teal',   2, 1,   1),
 
       /* ==================== SEMESTRE 2 ==================== */
-      subj('s2_1', 'Fondamentaux de la GRH',              'blue',   5, 2.5, 2),
-      subj('s2_2', 'Diagnostic Financier',                'green',  5, 2.5, 2),
-      subj('s2_3', 'Gestion de la Production',            'orange', 5, 2.5, 2),
-      subj('s2_4', 'Méthodologie Rapport de Stage',       'purple', 5, 2.5, 2),
-      subj('s2_5', 'Compétence Entrepreneuriales',        'purple', 3, 1.5, 2),
-      subj('s2_6', 'Compétence Linguistiques',            'pink',   2, 1,   2),
-      subj('s2_7', 'Recherche Opérationnelle',            'red',    2, 1,   2),
-      subj('s2_8', 'Finance de Marché / Étude de Marché', 'teal',   3, 1.5, 2),
-
-      /* ==================== SEMESTRE 3 ==================== */
       // Total : 30 crédits / 15 coef
-      subj('s3_1', 'Fondamentaux du Management',  'blue',   5, 2.5, 3),
-      subj('s3_2', 'Comptabilité de Gestion',     'green',  5, 2.5, 3),
-      subj('s3_3', 'Fondamentaux du Marketing',   'orange', 5, 2.5, 3),
-      subj('s3_4', 'Activité Pratique',           'teal',   5, 2.5, 3),
-      subj('s3_5', 'Compétence Entrepreneuriales','purple', 3, 1.5, 3),
-      subj('s3_6', 'Compétence Linguistiques',    'pink',   2, 1,   3),
-      subj('s3_7', 'Fiscalité',                   'red',    3, 1.5, 3),
-      subj('s3_8', 'Statistique Inférentielle',   'teal',   2, 1,   3),
-
-      /* ==================== SEMESTRE 4 ==================== */
-      // Total : 30 crédits / 15 coef
-      subj('s4_1', 'Fondamentaux de la GRH',                                'blue',   5, 2.5, 4),
-      subj('s4_2', 'Diagnostic Financier',                                  'green',  5, 2.5, 4),
-      subj('s4_3', 'Gestion de la Production',                              'orange', 5, 2.5, 4),
-      subj('s4_4', 'Méthodologie d\'Elaboration d\'un Rapport de Stage',    'purple', 5, 2.5, 4),
-      subj('s4_5', 'Compétence Entrepreneuriales',                          'purple', 3, 1.5, 4),
-      subj('s4_6', 'Compétence Linguistiques',                              'pink',   2, 1,   4),
-      subj('s4_7', 'Recherche Opérationnelle / Microéconomie des marchés',  'red',    2, 1,   4),
-      subj('s4_8', 'Introduction à la finance de marché / Étude de Marché', 'teal',   3, 1.5, 4)
+      subj('s2_1', 'Fondamentaux de la GRH',                                'blue',   5, 2.5, 2),
+      subj('s2_2', 'Diagnostic Financier',                                  'green',  5, 2.5, 2),
+      subj('s2_3', 'Gestion de la Production',                              'orange', 5, 2.5, 2),
+      subj('s2_4', 'Méthodologie d\'Elaboration d\'un Rapport de Stage',    'purple', 5, 2.5, 2),
+      subj('s2_5', 'Compétence Entrepreneuriales',                          'purple', 3, 1.5, 2),
+      subj('s2_6', 'Compétence Linguistiques',                              'pink',   2, 1,   2),
+      subj('s2_7', 'Recherche Opérationnelle / Microéconomie des marchés',  'red',    2, 1,   2),
+      subj('s2_8', 'Introduction à la finance de marché / Étude de Marché', 'teal',   3, 1.5, 2)
     ],
     classes: [],
     tasks: [
-      { id: 't1', name: 'Préparer le dossier de management',    subjectId: 's3_1', due: '2026-09-12', completed: false, comprehension: 6 },
-      { id: 't2', name: 'Exercices de comptabilité de gestion', subjectId: 's3_2', due: '2026-09-10', completed: false, comprehension: 4 },
-      { id: 't3', name: 'Lecture chapitre 3 Marketing',         subjectId: 's3_3', due: '2026-09-08', completed: false, comprehension: 8 },
-      { id: 't4', name: 'Rapport d\'activité pratique',         subjectId: 's3_4', due: '2026-09-15', completed: false, comprehension: 7 },
-      { id: 't5', name: 'Révision fiscalité (TVA)',             subjectId: 's3_7', due: '2026-09-09', completed: false, comprehension: 3 }
+      { id: 't1', name: 'Préparer le dossier de management',    subjectId: 's1_1', due: '2026-09-12', completed: false, comprehension: 6 },
+      { id: 't2', name: 'Exercices de comptabilité de gestion', subjectId: 's1_2', due: '2026-09-10', completed: false, comprehension: 4 },
+      { id: 't3', name: 'Lecture chapitre 3 Marketing',         subjectId: 's1_3', due: '2026-09-08', completed: false, comprehension: 8 },
+      { id: 't4', name: 'Rapport d\'activité pratique',         subjectId: 's1_4', due: '2026-09-15', completed: false, comprehension: 7 },
+      { id: 't5', name: 'Révision fiscalité (TVA)',             subjectId: 's1_7', due: '2026-09-09', completed: false, comprehension: 3 }
     ],
     exams: [
-      { id: 'e1', name: 'Management S3',    subjectId: 's3_1', date: '2026-10-15', progress: 40 },
-      { id: 'e2', name: 'Comptabilité S3',  subjectId: 's3_2', date: '2026-10-18', progress: 30 },
-      { id: 'e3', name: 'Marketing S3',     subjectId: 's3_3', date: '2026-10-22', progress: 25 }
+      { id: 'e1', name: 'Management S1',    subjectId: 's1_1', date: '2026-10-15', progress: 40 },
+      { id: 'e2', name: 'Comptabilité S1',  subjectId: 's1_2', date: '2026-10-18', progress: 30 },
+      { id: 'e3', name: 'Marketing S1',     subjectId: 's1_3', date: '2026-10-22', progress: 25 }
     ]
   };
 }
@@ -1706,7 +1682,6 @@ function loadData() {
       for (const k in def) { if (!(k in parsed)) parsed[k] = def[k]; }
       parsed.subjects.forEach(s => {
         if (s.credits === undefined) s.credits = 3;
-        // ⚠️ Le coefficient est INDÉPENDANT des crédits — on ne copie JAMAIS credits → coef
         if (s.coef === undefined || s.coef === null) s.coef = 1;
         if (s.semester === undefined) s.semester = 1;
         if (s.grade !== undefined) { if (s.exam === undefined || s.exam === null) s.exam = s.grade; delete s.grade; }
@@ -1739,8 +1714,6 @@ function subjectAverage(s) {
 }
 function isSubjectValidated(s) { const avg = subjectAverage(s); return avg !== null && avg >= 10; }
 function avgClass(avg) { if (avg === null) return 'empty'; return avg >= 10 ? 'good' : 'bad'; }
-
-/* Coefficient d'une matière : utilise coef, sinon 1 par défaut */
 function getSubjectCoef(s) { return (s.coef !== undefined && s.coef !== null) ? s.coef : 1; }
 
 const SESSIONS = [
@@ -1906,9 +1879,7 @@ function renderAll() {
 }
 
 /* ============================================================
-   CALCULS — CRÉDITS vs COEFFICIENTS
-   - La MOYENNE utilise les COEFFICIENTS (Σ avg×coef ÷ Σ coef)
-   - La VALIDATION DES CRÉDITS utilise les CRÉDITS ECTS
+   CALCULS — MOYENNE = COEFFICIENTS · VALIDATION = CRÉDITS
    ============================================================ */
 function calculateGPA() {
   const complete = data.subjects.filter(isSubjectComplete);
@@ -2041,9 +2012,6 @@ function renderDonutChart() {
   `;
 }
 
-/* Calcule les statistiques par semestre + global.
-   - avg   : moyenne pondérée par COEFFICIENTS
-   - totalCr / validatedCr : CRÉDITS ECTS */
 function computeMoyenneStats() {
   const complete = data.subjects.filter(isSubjectComplete);
   let totalWeighted = 0, gradedCoef = 0, validatedCredits = 0, totalCreditsAll = 0;
@@ -2072,7 +2040,8 @@ function computeMoyenneStats() {
     gradedCredits: gradedCoef,
     validatedCredits,
     totalCreditsAll,
-    s1: semStats(1), s2: semStats(2), s3: semStats(3), s4: semStats(4)
+    s1: semStats(1),
+    s2: semStats(2)
   };
 }
 
@@ -2094,28 +2063,23 @@ function renderMoyenne() {
       <div class="lbl">${t('moy_general')}</div>
       <div class="val" id="moyGenAvg">${general !== null ? general.toFixed(2) : '—'}</div>
       <div class="sub" id="moyGenSub"><span class="validated">${stats.validatedCredits}</span> / ${stats.totalCreditsAll} ${t('moy_credits_validated')}</div>
-    </div>`;
+    </div>
+    <div class="moy-summary-card">
+      <div class="lbl">${currentLang === 'fr' ? 'Semestre 1' : 'Semester 1'}</div>
+      <div class="val-sm" id="moyS1Avg">${stats.s1.avg !== null ? stats.s1.avg.toFixed(2) : '—'}</div>
+      <div class="sub" id="moyS1Sub"><span class="validated">${stats.s1.validatedCr}</span> / ${stats.s1.totalCr} ${t('moy_credits_validated')}</div>
+    </div>
+    <div class="moy-summary-card">
+      <div class="lbl">${currentLang === 'fr' ? 'Semestre 2' : 'Semester 2'}</div>
+      <div class="val-sm" id="moyS2Avg">${stats.s2.avg !== null ? stats.s2.avg.toFixed(2) : '—'}</div>
+      <div class="sub" id="moyS2Sub"><span class="validated">${stats.s2.validatedCr}</span> / ${stats.s2.totalCr} ${t('moy_credits_validated')}</div>
+    </div>
+  </div>`;
 
-  const semLabels = {
-    1: currentLang === 'fr' ? 'Semestre 1' : 'Semester 1',
-    2: currentLang === 'fr' ? 'Semestre 2' : 'Semester 2',
-    3: currentLang === 'fr' ? 'Semestre 3' : 'Semester 3',
-    4: currentLang === 'fr' ? 'Semestre 4' : 'Semester 4'
-  };
-  [1, 2, 3, 4].forEach(semNum => {
-    const sStats = semNum === 1 ? stats.s1 : (semNum === 2 ? stats.s2 : (semNum === 3 ? stats.s3 : stats.s4));
-    html += `<div class="moy-summary-card">
-      <div class="lbl">${semLabels[semNum]}</div>
-      <div class="val-sm" id="moyS${semNum}Avg">${sStats.avg !== null ? sStats.avg.toFixed(2) : '—'}</div>
-      <div class="sub" id="moyS${semNum}Sub"><span class="validated">${sStats.validatedCr}</span> / ${sStats.totalCr} ${t('moy_credits_validated')}</div>
-    </div>`;
-  });
-  html += `</div>`;
-
-  [1, 2, 3, 4].forEach(semNum => {
-    let sLabel = semNum === 1 ? t('moy_semester1') : semNum === 2 ? t('moy_semester2') : semNum === 3 ? t('moy_semester3') : t('moy_semester4');
+  [1, 2].forEach(semNum => {
+    const sLabel = semNum === 1 ? t('moy_semester1') : t('moy_semester2');
     const subs = data.subjects.filter(s => s.semester === semNum);
-    const sStats = semNum === 1 ? stats.s1 : (semNum === 2 ? stats.s2 : (semNum === 3 ? stats.s3 : stats.s4));
+    const sStats = semNum === 1 ? stats.s1 : stats.s2;
 
     html += `<div class="moy-semester">
       <div class="semester-title">${sLabel}<span class="badge" id="moySem${semNum}Badge">${sStats.validatedCr}/${sStats.totalCr} ${t('moy_credits_validated')}</span></div>
@@ -2201,8 +2165,8 @@ function updateMoyenneSummaryInPlace() {
   const gs = document.getElementById('moyGenSub');
   if (gs) gs.innerHTML = `<span class="validated">${stats.validatedCredits}</span> / ${stats.totalCreditsAll} ${t('moy_credits_validated')}`;
 
-  [1, 2, 3, 4].forEach(semNum => {
-    const sStats = semNum === 1 ? stats.s1 : (semNum === 2 ? stats.s2 : (semNum === 3 ? stats.s3 : stats.s4));
+  [1, 2].forEach(semNum => {
+    const sStats = semNum === 1 ? stats.s1 : stats.s2;
     const avgEl = document.getElementById(`moyS${semNum}Avg`);
     if (avgEl) avgEl.textContent = sStats.avg !== null ? sStats.avg.toFixed(2) : '—';
     const subEl = document.getElementById(`moyS${semNum}Sub`);
@@ -2519,8 +2483,6 @@ function subjectFieldHTML(selectId, inlineId, selectedId) {
   const colorOptions = ['green', 'blue', 'orange', 'red', 'purple', 'teal', 'pink'];
   const sem1 = currentLang === 'fr' ? 'Semestre 1' : 'Semester 1';
   const sem2 = currentLang === 'fr' ? 'Semestre 2' : 'Semester 2';
-  const sem3 = currentLang === 'fr' ? 'Semestre 3' : 'Semester 3';
-  const sem4 = currentLang === 'fr' ? 'Semestre 4' : 'Semester 4';
   return `
     <div class="form-group">
       <label>${t('form_subject')}</label>
@@ -2538,8 +2500,6 @@ function subjectFieldHTML(selectId, inlineId, selectedId) {
           <select class="ns-semester">
             <option value="1">${sem1}</option>
             <option value="2">${sem2}</option>
-            <option value="3">${sem3}</option>
-            <option value="4">${sem4}</option>
           </select>
           <select class="ns-color">
             ${colorOptions.map(c => `<option value="${c}">${c}</option>`).join('')}
@@ -2660,8 +2620,6 @@ function openModal(mode, preset = null) {
     const coef = (s.coef !== undefined && s.coef !== null) ? s.coef : 1;
     const sem1Label = currentLang === 'fr' ? 'Semestre 1' : 'Semester 1';
     const sem2Label = currentLang === 'fr' ? 'Semestre 2' : 'Semester 2';
-    const sem3Label = currentLang === 'fr' ? 'Semestre 3' : 'Semester 3';
-    const sem4Label = currentLang === 'fr' ? 'Semestre 4' : 'Semester 4';
     html = `
       <div class="form-group"><label>${t('form_name')}</label><input type="text" id="f_subjectName" value="${s.name || ''}" placeholder="e.g. Physique"></div>
       <div class="form-row">
@@ -2672,8 +2630,6 @@ function openModal(mode, preset = null) {
         <select id="f_subjectSemester">
           <option value="1" ${sem === 1 ? 'selected' : ''}>${sem1Label}</option>
           <option value="2" ${sem === 2 ? 'selected' : ''}>${sem2Label}</option>
-          <option value="3" ${sem === 3 ? 'selected' : ''}>${sem3Label}</option>
-          <option value="4" ${sem === 4 ? 'selected' : ''}>${sem4Label}</option>
         </select>
       </div>
       <div class="form-group"><label>${t('form_color')}</label><select id="f_subjectColor">${['green', 'blue', 'orange', 'red', 'purple', 'teal', 'pink'].map(col => `<option value="${col}" ${col === s.color ? 'selected' : ''}>${col}</option>`).join('')}</select></div>
@@ -2882,7 +2838,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-console.log('✨ UNIVA · v10 · Crédits & Coefficients séparés (S1-S4)');
+console.log('✨ UNIVA · v10 · 2 semestres uniquement (S1 + S2)');
 </script>
 </body>
 </html>
