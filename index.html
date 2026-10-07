@@ -693,11 +693,19 @@ button { cursor: pointer; border: none; background: none; }
 
 /* --- Mobile : cacher quelques icônes --- */
 @media (max-width: 750px) {
-  .wn-ic[data-mobile="hide"] { display: none; }
+  /* On garde toutes les icônes mais on les rétrécit */
+  .wn-ic {
+    transform-origin: center;
+    scale: 0.7;
+  }
   .wn-brand { letter-spacing: 6px; text-indent: 6px; }
 }
 @media (max-width: 480px) {
-  .wn-icons { display: none; }
+  /* Sur très petit écran, on réduit encore + on les rend plus discrètes */
+  .wn-ic {
+    scale: 0.5;
+    opacity: 0.5 !important;
+  }
   .wn-btn-wrap { margin-top: 32px; }
   .wn-dots { margin-top: 32px; }
   .welcome-nav { flex-direction: column-reverse; }
