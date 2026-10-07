@@ -20,7 +20,7 @@
   })();
 </script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Manrope:wght@400;600;800&display=swap');
 
 :root {
   --bg: #070B14;
@@ -214,91 +214,59 @@ button { cursor: pointer; border: none; background: none; }
 .mobile-theme-btn { display: none; }
 
 /* ============================================================
-   ★ ENTRANCE — FOND TECH (particules connectées) + CARTE GLASS ★
+   ★ ENTRANCE — MODÈLE 3 ANIMÉ (Logo seul) ★
    ============================================================ */
 .welcome-overlay {
   position: fixed; inset: 0; z-index: 1000;
   display: grid; place-items: center;
   padding: 24px 16px;
-  background: #060b1f;
-  transition: opacity 0.6s, visibility 0.6s;
   overflow: hidden;
+  background:
+    radial-gradient(ellipse at 15% 10%, #0d1f5c 0, transparent 45%),
+    radial-gradient(ellipse at 90% 20%, #1d1250 0, transparent 40%),
+    radial-gradient(ellipse at 50% 115%, #0a3a6b 0, transparent 40%),
+    #050818;
+  color: #e8ebff;
+  transition: opacity 0.6s, visibility 0.6s;
 }
 .welcome-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-/* --- Couches du fond tech (identiques au fichier Background) --- */
-.welcome-bg {
-  position: absolute; inset: 0; z-index: 0; overflow: hidden;
-  background: radial-gradient(120% 80% at 50% 110%, #101a4a 0%, #060b1f 60%);
+/* --- Réseau décoratif SVG (lignes + points) --- */
+.welcome-network {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0.35;
+  pointer-events: none;
 }
-.welcome-aurora {
-  position: absolute; inset: -20%;
-  filter: blur(70px); opacity: 0.75;
+.welcome-network .wn-line {
+  stroke: #5b7bd6; stroke-width: 1;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  animation: wn-draw 3.5s ease-out 0.3s forwards;
 }
-.welcome-aurora i {
-  position: absolute; border-radius: 50%;
-  mix-blend-mode: screen;
-  animation: welcome-drift 22s ease-in-out infinite alternate;
+.welcome-network .wn-dot {
+  fill: #7aa2ff;
+  transform-box: fill-box; transform-origin: center;
+  animation: wn-tw 3s ease-in-out infinite;
 }
-.welcome-aurora i:nth-child(1) {
-  width: 46vmax; height: 46vmax; left: -8%; top: -12%;
-  background: radial-gradient(circle, #1d4ed8 0%, transparent 65%);
-}
-.welcome-aurora i:nth-child(2) {
-  width: 40vmax; height: 40vmax; right: -6%; top: 6%;
-  background: radial-gradient(circle, #6d4aff 0%, transparent 65%);
-  animation-duration: 28s; animation-delay: -8s;
-}
-.welcome-aurora i:nth-child(3) {
-  width: 34vmax; height: 34vmax; left: 30%; bottom: -18%;
-  background: radial-gradient(circle, #0ea5e9 0%, transparent 65%);
-  animation-duration: 25s; animation-delay: -14s;
-}
-@keyframes welcome-drift { to { transform: translate3d(8vw, 6vh, 0) scale(1.15); } }
-
-.welcome-grid {
-  position: absolute; left: -50%; right: -50%; bottom: -8%; height: 62%;
-  background-image:
-    linear-gradient(rgba(96,165,250,.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(96,165,250,.35) 1px, transparent 1px);
-  background-size: 64px 64px;
-  transform: perspective(520px) rotateX(62deg);
-  transform-origin: 50% 100%;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 85%);
-  mask-image: linear-gradient(to top, #000 0%, transparent 85%);
-  animation: welcome-flow 6s linear infinite;
-}
-@keyframes welcome-flow { to { background-position: 0 64px, 0 0; } }
-
-.welcome-horizon {
-  position: absolute; left: 0; right: 0; bottom: 30%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(125,211,252,.7), transparent);
-  box-shadow: 0 0 40px 6px rgba(56,189,248,.25);
-}
-#net {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-}
-.welcome-vignette {
-  position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 45%, rgba(3,6,20,.65) 100%);
-}
+.welcome-network .wn-dot:nth-child(3n)   { animation-delay: .8s; }
+.welcome-network .wn-dot:nth-child(3n+1) { animation-delay: 1.6s; }
 
 /* --- Bouton langue (top right) --- */
 .welcome-lang-toggle {
   position: absolute;
-  top: calc(16px + env(safe-area-inset-top, 0px));
-  right: 16px; z-index: 3;
+  top: calc(20px + env(safe-area-inset-top, 0px));
+  right: 20px; z-index: 3;
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 12px 6px 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.26);
-  background: rgba(255,255,255,.08);
+  padding: 8px 14px 8px 8px;
+  border-radius: 99px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.06);
   color: #fff;
-  font: 600 11px Inter, sans-serif;
+  font: 800 12px Manrope, Inter, sans-serif;
   cursor: pointer;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  transition: border-color 0.2s ease;
+  transition: border-color .2s;
 }
 .welcome-lang-toggle:hover { border-color: var(--accent-primary); }
 .welcome-lang-toggle .wl-icon {
@@ -307,24 +275,14 @@ button { cursor: pointer; border: none; background: none; }
   display: grid; place-items: center; font-size: 12px; line-height: 1;
 }
 
-/* --- Carte glass --- */
+/* --- Conteneur central (stage) --- */
 .welcome-box {
   position: relative; z-index: 2;
-  width: min(480px, 100%);
-  padding: 38px 48px 30px;
-  border-radius: 30px;
+  display: flex; flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  width: 100%; max-width: 520px;
   text-align: center;
-  background: linear-gradient(180deg,
-    rgba(130,125,200,.38) 0%,
-    rgba(55,50,130,.52) 50%,
-    rgba(22,24,80,.66) 100%);
-  border: 1px solid rgba(255,255,255,.22);
-  -webkit-backdrop-filter: blur(26px) saturate(1.2);
-  backdrop-filter: blur(26px) saturate(1.2);
-  box-shadow:
-    0 30px 80px rgba(2,4,30,.55),
-    0 0 110px rgba(91,91,255,.28),
-    inset 0 1px 0 rgba(255,255,255,.2);
   animation: welcomeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 @keyframes welcomeIn {
@@ -332,55 +290,157 @@ button { cursor: pointer; border: none; background: none; }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.welcome-logo-mark {
-  width: 116px; height: 116px;
-  display: block; margin: 0 auto 4px;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 26px rgba(91,110,255,.55));
+/* --- Logo SVG + halo --- */
+.welcome-logo-block {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px;
+  animation: wn-float 6s ease-in-out 2s infinite;
 }
-.welcome-brand-name {
-  margin: 4px 0 6px;
-  font: 700 40px/1 var(--font-serif);
-  letter-spacing: 0.05em;
-  background: linear-gradient(90deg, #fff, #b9b6ff);
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent;
+.welcome-glow {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 520px; height: 360px;
+  margin: -180px 0 0 -260px;
+  background: radial-gradient(closest-side, rgba(110,120,255,.45), transparent);
+  pointer-events: none;
+  animation: wn-breathe 5s ease-in-out infinite;
+}
+.welcome-logo-svg {
+  position: relative;
+  width: clamp(110px, 22vw, 150px);
+  height: auto;
   display: block;
 }
-.welcome-box .logo-sub {
-  margin: 0 0 26px;
-  font-size: 12.5px;
-  color: rgba(255,255,255,.62);
+.welcome-logo-svg .body { animation: wn-pop 1s cubic-bezier(.2,.8,.2,1) .2s both; }
+.welcome-logo-svg .cap  {
+  animation: wn-drop .9s cubic-bezier(.2,.8,.2,1) .9s both;
+  transform-box: fill-box; transform-origin: center;
 }
 
-.welcome-step { display: none; }
-.welcome-step.active { display: block; animation: stepIn 0.35s ease; }
-@keyframes stepIn { from { opacity: 0; transform: translateY(8px); } }
+.welcome-brand-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 3px;
+  font-size: clamp(48px, 10vw, 75px);
+  line-height: 1.1;
+  color: #d7d9fb;
+  display: inline-block;
+}
+.welcome-brand-name span {
+  display: inline-block;
+  opacity: 0;
+  animation: wn-rise .7s cubic-bezier(.2,.8,.2,1) both;
+}
+.welcome-brand-name span:nth-child(1){ animation-delay: 1.00s; }
+.welcome-brand-name span:nth-child(2){ animation-delay: 1.09s; }
+.welcome-brand-name span:nth-child(3){ animation-delay: 1.18s; }
+.welcome-brand-name span:nth-child(4){ animation-delay: 1.27s; }
+.welcome-brand-name span:nth-child(5){ animation-delay: 1.36s; }
 
+.welcome-box .logo-sub {
+  font-size: clamp(12px, 3vw, 15px);
+  color: #9aa0c8;
+  opacity: 0;
+  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 1.6s both;
+}
+
+/* --- Bouton principal --- */
+/* ★ Les boutons des étapes 2 et 3 apparaissent immédiatement */
+.welcome-step[data-step="2"] .primary-btn,
+.welcome-step[data-step="3"] .primary-btn {
+  opacity: 1;
+  animation: none;
+}
+.welcome-box .primary-btn {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 380px;
+  padding: 16px;
+  border: 0;
+  border-radius: 99px;
+  text-align: center;
+  font: 800 15px Manrope, Inter, sans-serif;
+  color: #0a0f2c;
+  background: linear-gradient(90deg, #63a4ff, #a78bfa);
+  box-shadow: 0 8px 30px rgba(120,130,255,.4);
+  cursor: pointer;
+  transition: transform .15s, filter .2s;
+  opacity: 0;
+  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 1.8s both, wn-glow 3s ease-in-out 2.5s infinite;
+}
+.welcome-box .primary-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.welcome-box .primary-btn:active { transform: scale(0.99); }
+.welcome-box .primary-btn[disabled] { opacity: 0.45; cursor: not-allowed; filter: none; }
+
+.welcome-btn-shine {
+  position: absolute;
+  top: 0; bottom: 0; width: 30%;
+  left: -40%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.6), transparent);
+  animation: wn-shine 4.5s ease-in-out 2.6s infinite;
+  pointer-events: none;
+}
+
+/* --- Bouton secondaire (retour) --- */
+.welcome-box .cancel-btn {
+  flex-shrink: 0; padding: 0 20px; height: 52px;
+  border-radius: 26px;
+  font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.16);
+  color: rgba(255,255,255,.72);
+  cursor: pointer;
+  transition: .2s;
+}
+.welcome-box .cancel-btn:hover { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.3); }
+
+/* --- Indicateurs (dots) --- */
+.welcome-dots {
+  display: flex; justify-content: center; gap: 8px;
+  opacity: 0;
+  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 2.2s both;
+}
+.welcome-dots span {
+  width: 8px; height: 8px; border-radius: 9px;
+  background: rgba(255,255,255,.25);
+  transition: 0.3s;
+}
+.welcome-dots span.active {
+  width: 24px;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+}
+
+/* --- Étapes 2 et 3 --- */
+.welcome-step { display: none; width: 100%; }
+.welcome-step.active { display: block; animation: stepIn 0.5s cubic-bezier(.2,.8,.2,1); }
+@keyframes stepIn { from { opacity: 0; transform: translateY(16px); } }
 
 .welcome-step-title {
   margin: 0 0 8px;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: clamp(22px, 5.5vw, 28px);
+  font: 500 clamp(22px, 5.5vw, 28px)/1.2 Manrope, Inter, sans-serif;
   letter-spacing: -0.01em;
   color: #fff;
   display: block;
+  text-align: center;
 }
 .welcome-step-sub {
-  margin: 0 0 20px;
+  margin: 0 0 22px;
   font-size: 13px;
   color: rgba(255,255,255,.62);
+  text-align: center;
 }
 
 .welcome-box .form-group { text-align: left; margin-bottom: 0; }
 .welcome-box .form-group input {
-  width: 100%; height: 52px; padding: 0 20px;
-  border-radius: 26px;
-  border: 1px solid rgba(255,255,255,.26);
+  width: 100%; height: 54px;
+  padding: 0 20px;
+  border-radius: 27px;
+  border: 1px solid rgba(255,255,255,.22);
   background: rgba(255,255,255,.06);
   color: #fff;
-  font: 500 15px var(--font-sans);
+  font: 500 15px Manrope, Inter, sans-serif;
   text-align: center; outline: none;
   transition: 0.2s;
 }
@@ -391,49 +451,11 @@ button { cursor: pointer; border: none; background: none; }
   box-shadow: 0 0 0 3px rgba(143,139,255,.25);
 }
 
-.welcome-box .primary-btn {
-  width: 100%; height: 52px; margin-top: 18px;
-  border: 0; border-radius: 26px;
-  font: 600 15px var(--font-sans);
-  color: #fff; cursor: pointer;
-  background: linear-gradient(90deg, #60a5fa, #8b7bff 55%, #a78bfa);
-  box-shadow: 0 10px 30px rgba(96,130,255,.45);
-  transition: transform 0.15s, filter 0.2s;
-}
-.welcome-box .primary-btn:hover { filter: brightness(1.1); }
-.welcome-box .primary-btn:active { transform: scale(0.99); }
-.welcome-box .primary-btn[disabled] { opacity: 0.45; cursor: not-allowed; filter: none; }
-
 .welcome-nav {
   display: flex; gap: 10px; align-items: center;
-  margin-top: 12px;
+  margin-top: 14px;
 }
-.welcome-nav .primary-btn { flex: 1; margin-top: 0; }
-.welcome-nav .cancel-btn {
-  flex-shrink: 0; padding: 0 20px; height: 52px;
-  border-radius: 26px;
-  font-size: 13px; font-weight: 500;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.26);
-  color: rgba(255,255,255,.62);
-  cursor: pointer;
-  transition: 0.2s;
-}
-.welcome-nav .cancel-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
-
-.welcome-dots {
-  display: flex; justify-content: center; gap: 7px;
-  margin-top: 22px;
-}
-.welcome-dots span {
-  height: 6px; width: 6px; border-radius: 6px;
-  background: rgba(255,255,255,.28);
-  transition: 0.3s;
-}
-.welcome-dots span.active {
-  width: 24px;
-  background: linear-gradient(90deg, #60a5fa, #a78bfa);
-}
+.welcome-nav .primary-btn { flex: 1; margin-top: 0; max-width: none; padding: 14px; }
 
 .gender-select {
   display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
@@ -441,27 +463,41 @@ button { cursor: pointer; border: none; background: none; }
 .gender-option {
   height: 56px;
   border-radius: 18px;
-  border: 1px solid rgba(255,255,255,.26);
+  border: 1px solid rgba(255,255,255,.22);
   background: rgba(255,255,255,.05);
   color: #fff;
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  font: 500 15px var(--font-sans);
+  font: 600 15px Manrope, Inter, sans-serif;
   cursor: pointer;
   transition: 0.2s;
 }
-.gender-option:hover { background: rgba(255,255,255,.12); }
+.gender-option:hover { background: rgba(255,255,255,.1); }
 .gender-option.active {
   border-color: #8f8bff;
-  background: rgba(91,91,255,.3);
+  background: rgba(91,91,255,.28);
   box-shadow: 0 0 0 3px rgba(143,139,255,.22);
 }
-.gender-option .g-icon { font-size: 15px; }
+.gender-option .g-icon { font-size: 16px; }
+
+/* --- Animations --- */
+@keyframes wn-rise  { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes wn-pop   { 0% { opacity: 0; transform: scale(.6); filter: blur(12px); } 100% { opacity: 1; transform: scale(1); filter: blur(0); } }
+@keyframes wn-drop  { 0% { opacity: 0; transform: translateY(-30px) rotate(-10deg); } 60% { opacity: 1; transform: translateY(5px) rotate(2deg); } 100% { opacity: 1; transform: none; } }
+@keyframes wn-float { 50% { transform: translateY(-10px); } }
+@keyframes wn-breathe { 50% { opacity: .55; transform: scale(1.1); } }
+@keyframes wn-draw  { to { stroke-dashoffset: 0; } }
+@keyframes wn-tw    { 50% { opacity: .25; transform: scale(1.9); } }
+@keyframes wn-shine { 0% { left: -40%; } 55%, 100% { left: 130%; } }
+@keyframes wn-glow  { 50% { box-shadow: 0 8px 48px rgba(140,150,255,.75); } }
 
 @media (max-width: 480px) {
-  .welcome-box { padding: 32px 24px 26px; }
+  .welcome-box { gap: 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .welcome-aurora i, .welcome-grid { animation: none; }
+  .welcome-overlay *, .welcome-overlay *::before, .welcome-overlay *::after {
+    animation: none !important; opacity: 1 !important; transform: none !important;
+  }
+  .welcome-network .wn-line { stroke-dasharray: none; stroke-dashoffset: 0; }
 }
 
 /* ============================================================
@@ -993,17 +1029,13 @@ button { cursor: pointer; border: none; background: none; }
   .page { padding: 10px 14px 12px; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .stats-bottom { grid-template-columns: repeat(2, 1fr); }
-
-  /* ★ FIX SCROLL MOBILE : les charts ne doivent PAS s'écraser */
   .charts-row {
     grid-template-columns: 1fr;
     gap: 10px;
-    flex: none;          /* ← libère la hauteur */
-    min-height: auto;    /* ← enlève la contrainte de compression */
+    flex: none;
+    min-height: auto;
   }
-  .chart-card {
-    min-height: 220px;   /* ← garde une hauteur lisible */
-  }
+  .chart-card { min-height: 220px; }
 }
 
 @media (max-width: 750px) {
@@ -1084,9 +1116,7 @@ button { cursor: pointer; border: none; background: none; }
 @media (max-width: 480px) {
   .kpi-number { font-size: 17px; }
   .page-title { font-size: 16px; }
-  .welcome-brand-name { font-size: 32px; }
-  .welcome-logo-mark { width: 100px; height: 100px; }
-  .welcome-step-title { font-size: 18px; }
+  .welcome-box { gap: 22px; }
   .welcome-nav { flex-direction: column-reverse; }
   .welcome-nav .primary-btn, .welcome-nav .cancel-btn { width: 100%; }
 }
@@ -1099,32 +1129,68 @@ button { cursor: pointer; border: none; background: none; }
 <body>
 
 <!-- ============================================================
-     ★ ENTRANCE — FOND TECH + CARTE GLASS ★
+     ★ ENTRANCE — MODÈLE 3 ANIMÉ (Logo seul) ★
      ============================================================ -->
 <div class="welcome-overlay" id="welcomeOverlay">
 
-  <div class="welcome-bg" aria-hidden="true">
-    <div class="welcome-aurora"><i></i><i></i><i></i></div>
-    <div class="welcome-grid"></div>
-    <div class="welcome-horizon"></div>
-    <canvas id="net"></canvas>
-    <div class="welcome-vignette"></div>
-  </div>
+  <!-- Réseau décoratif -->
+  <svg class="welcome-network" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none">
+      <path class="wn-line" d="M20 60 90 140 210 90 300 190"/>
+      <path class="wn-line" d="M980 70 1060 150 1180 100 1260 200"/>
+      <path class="wn-line" d="M1100 560 1190 600 1270 540"/>
+    </g>
+    <g>
+      <circle class="wn-dot" cx="20"   cy="60"  r="3"/>
+      <circle class="wn-dot" cx="90"   cy="140" r="3"/>
+      <circle class="wn-dot" cx="210"  cy="90"  r="3"/>
+      <circle class="wn-dot" cx="300"  cy="190" r="3"/>
+      <circle class="wn-dot" cx="980"  cy="70"  r="3"/>
+      <circle class="wn-dot" cx="1060" cy="150" r="3"/>
+      <circle class="wn-dot" cx="1180" cy="100" r="3"/>
+      <circle class="wn-dot" cx="1100" cy="560" r="3"/>
+      <circle class="wn-dot" cx="1190" cy="600" r="3"/>
+    </g>
+  </svg>
 
+  <!-- Bouton langue -->
   <button class="welcome-lang-toggle" id="welcomeLangToggle" onclick="toggleLanguage()" aria-label="Langue">
     <span class="wl-icon">🌐</span>
     <span id="welcomeLangLabel">FR</span>
   </button>
 
+  <!-- Scène centrale -->
   <div class="welcome-box">
 
+    <!-- Étape 1 : Logo + Commencer -->
     <div class="welcome-step active" data-step="1">
-      <img class="welcome-logo-mark" id="welcomeLogo" src="logo.png" alt="UNIVA" />
-      <div class="welcome-brand-name">UNIVA</div>
-      <div class="logo-sub" id="welcomeLogoSub">Intelligence · Organisation · Maîtrise</div>
-      <button class="primary-btn" id="startBtn" style="margin-top:0;">Commencer</button>
+      <div class="welcome-logo-block">
+        <div class="welcome-glow"></div>
+        <svg class="welcome-logo-svg" viewBox="0 0 72 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="welcomeLogoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5ab0ff"/>
+              <stop offset="1" stop-color="#7a5cff"/>
+            </linearGradient>
+          </defs>
+          <path class="body" d="M8 14h18v28a8 8 0 0 0 16 0V14h18v28a26 26 0 0 1-52 0z" fill="url(#welcomeLogoGrad)"/>
+          <g class="cap">
+            <path d="M34 14 52 6l18 8-18 8z" fill="#1b2350"/>
+            <path d="M66 15v14" stroke="#1b2350" stroke-width="3"/>
+          </g>
+        </svg>
+        <div class="welcome-brand-name" aria-label="UNIVA">
+          <span>U</span><span>N</span><span>I</span><span>V</span><span>A</span>
+        </div>
+        <div class="logo-sub" id="welcomeLogoSub">Intelligence · Organisation · Maîtrise</div>
+      </div>
+      <button class="primary-btn" id="startBtn" type="button">
+        Commencer
+        <span class="welcome-btn-shine"></span>
+      </button>
     </div>
 
+    <!-- Étape 2 : Prénom -->
     <div class="welcome-step" data-step="2">
       <div class="welcome-step-title" id="welcomeNameLabel">Quel est ton prénom ?</div>
       <div class="welcome-step-sub" id="welcomeNameSub">On personnalise ton espace.</div>
@@ -1133,12 +1199,15 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <div class="welcome-nav">
         <button class="cancel-btn" id="backToStep1" onclick="goToStep(1)">← Retour</button>
-        <button class="primary-btn" id="toStep3Btn">Continuer</button>
+        <button class="primary-btn" id="toStep3Btn" type="button">
+          Continuer
+          <span class="welcome-btn-shine"></span>
+        </button>
       </div>
     </div>
 
+    <!-- Étape 3 : Genre -->
     <div class="welcome-step" data-step="3">
-     
       <div class="welcome-step-title" id="welcomeGenderLabel">Je suis :</div>
       <div class="welcome-step-sub" id="welcomeGenderSub">Choisis ce qui te correspond.</div>
       <div class="gender-select">
@@ -1153,10 +1222,14 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <div class="welcome-nav">
         <button class="cancel-btn" id="backToStep2" onclick="goToStep(2)">← Retour</button>
-        <button class="primary-btn" id="enterBtn">Entrer dans l'espace</button>
+        <button class="primary-btn" id="enterBtn" type="button">
+          Entrer dans l'espace
+          <span class="welcome-btn-shine"></span>
+        </button>
       </div>
     </div>
 
+    <!-- Points -->
     <div class="welcome-dots" id="welcomeDots">
       <span class="active"></span><span></span><span></span>
     </div>
@@ -1500,93 +1573,6 @@ button { cursor: pointer; border: none; background: none; }
 
 <script>
 /* ============================================================
-   ★ ANIMATION DU FOND TECH (canvas #net) ★
-   — Particules connectées + réaction souris (identique au fichier Background)
-   ============================================================ */
-(function welcomeNetAnim() {
-  const c = document.getElementById('net');
-  if (!c) return;
-  const x = c.getContext('2d');
-  const still = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  let W, H, P = [], m = { x: -999, y: -999 };
-  const dpr = Math.min(devicePixelRatio || 1, 2);
-  const cols = ['125,211,252', '147,197,253', '167,139,250'];
-
-  function size() {
-    W = innerWidth; H = innerHeight;
-    c.width = W * dpr; c.height = H * dpr;
-    x.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = Math.min(130, Math.round(W * H / 13000));
-    P = Array.from({ length: n }, () => ({
-      x: Math.random() * W,
-      y: Math.random() * H * 0.78,
-      vx: (Math.random() - .5) * .35,
-      vy: (Math.random() - .5) * .35,
-      r: Math.random() * 1.6 + .8,
-      c: cols[Math.random() * 3 | 0],
-      p: Math.random() * 6.28
-    }));
-    if (still) draw(0);
-  }
-
-  function draw(t) {
-    const overlay = document.getElementById('welcomeOverlay');
-    if (!overlay) { if (!still) requestAnimationFrame(draw); return; }
-    if (overlay.classList.contains('hidden')) {
-      if (!still) requestAnimationFrame(draw);
-      return;
-    }
-
-    x.clearRect(0, 0, W, H);
-    const L = 140;
-    for (let i = 0; i < P.length; i++) {
-      const a = P[i];
-      for (let j = i + 1; j < P.length; j++) {
-        const b = P[j];
-        const dx = a.x - b.x, dy = a.y - b.y, d = dx * dx + dy * dy;
-        if (d < L * L) {
-          const o = (1 - Math.sqrt(d) / L) * .42;
-          x.strokeStyle = 'rgba(125,180,255,' + o + ')';
-          x.lineWidth = .8;
-          x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(b.x, b.y); x.stroke();
-        }
-      }
-      const mx = a.x - m.x, my = a.y - m.y, md = Math.hypot(mx, my);
-      if (md < 170) {
-        const o = (1 - md / 170) * .8;
-        x.strokeStyle = 'rgba(167,139,250,' + o + ')';
-        x.lineWidth = 1;
-        x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(m.x, m.y); x.stroke();
-        a.vx += -mx / md * .004;
-        a.vy += -my / md * .004;
-      }
-    }
-    for (const a of P) {
-      const g = .6 + .4 * Math.sin(t / 900 + a.p);
-      x.fillStyle = 'rgba(' + a.c + ',' + g + ')';
-      x.shadowColor = 'rgba(' + a.c + ',.9)';
-      x.shadowBlur = 10;
-      x.beginPath(); x.arc(a.x, a.y, a.r, 0, 6.283); x.fill();
-      if (!still) {
-        a.x += a.vx; a.y += a.vy;
-        a.vx = Math.max(-.5, Math.min(.5, a.vx));
-        a.vy = Math.max(-.5, Math.min(.5, a.vy));
-        if (a.x < 0 || a.x > W) a.vx *= -1;
-        if (a.y < 0 || a.y > H * .8) a.vy *= -1;
-      }
-    }
-    x.shadowBlur = 0;
-    if (!still) requestAnimationFrame(draw);
-  }
-
-  addEventListener('resize', size);
-  addEventListener('pointermove', e => { m.x = e.clientX; m.y = e.clientY; });
-  addEventListener('pointerleave', () => { m.x = m.y = -999; });
-  size();
-  if (!still) requestAnimationFrame(draw);
-})();
-
-/* ============================================================
    TRANSLATIONS
    ============================================================ */
 const TRANSLATIONS = {
@@ -1920,7 +1906,6 @@ function getDefaultData() {
 
   return {
     subjects: [
-      /* ==================== SEMESTRE 1 ==================== */
       subj('s1_1', 'Fondamentaux du Management',  'blue',   5, 2.5, 1),
       subj('s1_2', 'Comptabilité de Gestion',      'green',  5, 2.5, 1),
       subj('s1_3', 'Fondamentaux du Marketing',    'orange', 5, 2.5, 1),
@@ -1929,8 +1914,6 @@ function getDefaultData() {
       subj('s1_6', 'Compétence Linguistiques',     'pink',   2, 1,   1),
       subj('s1_7', 'Fiscalité',                    'red',    3, 1.5, 1),
       subj('s1_8', 'Statistique Inférentielle',    'teal',   2, 1,   1),
-
-      /* ==================== SEMESTRE 2 ==================== */
       subj('s2_1', 'Fondamentaux de la GRH',                                'blue',   5, 2.5, 2),
       subj('s2_2', 'Diagnostic Financier',                                  'green',  5, 2.5, 2),
       subj('s2_3', 'Gestion de la Production',                              'orange', 5, 2.5, 2),
@@ -3111,8 +3094,6 @@ wrapper.style.transform = 'translateX(0)';
 const pages = wrapper.querySelectorAll('.page');
 pages.forEach(p => p.style.minWidth = '100%');
 
-
-
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js')
@@ -3121,7 +3102,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-console.log('✨ UNIVA · v12 · Tech background (particules connectées)');
+console.log('✨ UNIVA · v13 · Entrance Modèle 3 animé');
 </script>
 </body>
 </html>
