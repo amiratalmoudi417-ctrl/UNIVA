@@ -173,25 +173,6 @@ button { cursor: pointer; border: none; background: none; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
 
-@keyframes univa-letter-in {
-  0%   { opacity: 0; transform: translateY(10px) scale(.92); }
-  60%  { opacity: 1; transform: translateY(-2px) scale(1.03); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-.univa-letters { display: inline-block; }
-.univa-letters > span {
-  display: inline-block; opacity: 0;
-  background: var(--grad-accent-text);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  animation: univa-letter-in 1.5s var(--anim-ease) forwards;
-}
-.univa-letters > span:nth-child(1) { animation-delay: .05s; }
-.univa-letters > span:nth-child(2) { animation-delay: .13s; }
-.univa-letters > span:nth-child(3) { animation-delay: .21s; }
-.univa-letters > span:nth-child(4) { animation-delay: .29s; }
-.univa-letters > span:nth-child(5) { animation-delay: .37s; }
-
 @keyframes univa-card-pop {
   0%   { opacity: 0; transform: translateY(20px) scale(.92); }
   40%  { opacity: 1; transform: translateY(-3px) scale(1.015); }
@@ -224,13 +205,268 @@ button { cursor: pointer; border: none; background: none; }
 .univa-stagger > *:nth-child(7) { animation-delay: .59s; }
 .univa-stagger > *:nth-child(8) { animation-delay: .68s; }
 @media (prefers-reduced-motion: reduce) {
-  .univa-letters > span, .univa-pop, .univa-stagger > *, .univa-glow::after {
+  .univa-pop, .univa-stagger > *, .univa-glow::after {
     animation: none !important; opacity: 1 !important; transform: none !important; filter: none !important;
   }
 }
 
 .mobile-nav { display: none; }
 .mobile-theme-btn { display: none; }
+
+/* ============================================================
+   ★ ENTRANCE — FOND TECH (particules connectées) + CARTE GLASS ★
+   ============================================================ */
+.welcome-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: grid; place-items: center;
+  padding: 24px 16px;
+  background: #060b1f;
+  transition: opacity 0.6s, visibility 0.6s;
+  overflow: hidden;
+}
+.welcome-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* --- Couches du fond tech (identiques au fichier Background) --- */
+.welcome-bg {
+  position: absolute; inset: 0; z-index: 0; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 110%, #101a4a 0%, #060b1f 60%);
+}
+.welcome-aurora {
+  position: absolute; inset: -20%;
+  filter: blur(70px); opacity: 0.75;
+}
+.welcome-aurora i {
+  position: absolute; border-radius: 50%;
+  mix-blend-mode: screen;
+  animation: welcome-drift 22s ease-in-out infinite alternate;
+}
+.welcome-aurora i:nth-child(1) {
+  width: 46vmax; height: 46vmax; left: -8%; top: -12%;
+  background: radial-gradient(circle, #1d4ed8 0%, transparent 65%);
+}
+.welcome-aurora i:nth-child(2) {
+  width: 40vmax; height: 40vmax; right: -6%; top: 6%;
+  background: radial-gradient(circle, #6d4aff 0%, transparent 65%);
+  animation-duration: 28s; animation-delay: -8s;
+}
+.welcome-aurora i:nth-child(3) {
+  width: 34vmax; height: 34vmax; left: 30%; bottom: -18%;
+  background: radial-gradient(circle, #0ea5e9 0%, transparent 65%);
+  animation-duration: 25s; animation-delay: -14s;
+}
+@keyframes welcome-drift { to { transform: translate3d(8vw, 6vh, 0) scale(1.15); } }
+
+.welcome-grid {
+  position: absolute; left: -50%; right: -50%; bottom: -8%; height: 62%;
+  background-image:
+    linear-gradient(rgba(96,165,250,.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96,165,250,.35) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+  mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+  animation: welcome-flow 6s linear infinite;
+}
+@keyframes welcome-flow { to { background-position: 0 64px, 0 0; } }
+
+.welcome-horizon {
+  position: absolute; left: 0; right: 0; bottom: 30%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(125,211,252,.7), transparent);
+  box-shadow: 0 0 40px 6px rgba(56,189,248,.25);
+}
+#net {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+}
+.welcome-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(3,6,20,.65) 100%);
+}
+
+/* --- Bouton langue (top right) --- */
+.welcome-lang-toggle {
+  position: absolute;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: 16px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.26);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font: 600 11px Inter, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease;
+}
+.welcome-lang-toggle:hover { border-color: var(--accent-primary); }
+.welcome-lang-toggle .wl-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #5b5bff);
+  display: grid; place-items: center; font-size: 12px; line-height: 1;
+}
+
+/* --- Carte glass --- */
+.welcome-box {
+  position: relative; z-index: 2;
+  width: min(480px, 100%);
+  padding: 38px 48px 30px;
+  border-radius: 30px;
+  text-align: center;
+  background: linear-gradient(180deg,
+    rgba(130,125,200,.38) 0%,
+    rgba(55,50,130,.52) 50%,
+    rgba(22,24,80,.66) 100%);
+  border: 1px solid rgba(255,255,255,.22);
+  -webkit-backdrop-filter: blur(26px) saturate(1.2);
+  backdrop-filter: blur(26px) saturate(1.2);
+  box-shadow:
+    0 30px 80px rgba(2,4,30,.55),
+    0 0 110px rgba(91,91,255,.28),
+    inset 0 1px 0 rgba(255,255,255,.2);
+  animation: welcomeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes welcomeIn {
+  0% { opacity: 0; transform: translateY(30px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.welcome-logo-mark {
+  width: 116px; height: 116px;
+  display: block; margin: 0 auto 4px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 26px rgba(91,110,255,.55));
+}
+.welcome-brand-name {
+  margin: 4px 0 6px;
+  font: 700 40px/1 var(--font-serif);
+  letter-spacing: 0.05em;
+  background: linear-gradient(90deg, #fff, #b9b6ff);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  display: block;
+}
+.welcome-box .logo-sub {
+  margin: 0 0 26px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,.62);
+}
+
+.welcome-step { display: none; }
+.welcome-step.active { display: block; animation: stepIn 0.35s ease; }
+@keyframes stepIn { from { opacity: 0; transform: translateY(8px); } }
+
+.welcome-step-icon { font-size: 34px; line-height: 1; margin-bottom: 6px; }
+.welcome-step-title {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(22px, 5.5vw, 28px);
+  letter-spacing: -0.01em;
+  color: #fff;
+  display: block;
+}
+.welcome-step-sub {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,.62);
+}
+
+.welcome-box .form-group { text-align: left; margin-bottom: 0; }
+.welcome-box .form-group input {
+  width: 100%; height: 52px; padding: 0 20px;
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,.26);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  font: 500 15px var(--font-sans);
+  text-align: center; outline: none;
+  transition: 0.2s;
+}
+.welcome-box .form-group input::placeholder { color: rgba(255,255,255,.5); }
+.welcome-box .form-group input:focus {
+  border-color: #8f8bff;
+  background: rgba(91,91,255,.16);
+  box-shadow: 0 0 0 3px rgba(143,139,255,.25);
+}
+
+.welcome-box .primary-btn {
+  width: 100%; height: 52px; margin-top: 18px;
+  border: 0; border-radius: 26px;
+  font: 600 15px var(--font-sans);
+  color: #fff; cursor: pointer;
+  background: linear-gradient(90deg, #60a5fa, #8b7bff 55%, #a78bfa);
+  box-shadow: 0 10px 30px rgba(96,130,255,.45);
+  transition: transform 0.15s, filter 0.2s;
+}
+.welcome-box .primary-btn:hover { filter: brightness(1.1); }
+.welcome-box .primary-btn:active { transform: scale(0.99); }
+.welcome-box .primary-btn[disabled] { opacity: 0.45; cursor: not-allowed; filter: none; }
+
+.welcome-nav {
+  display: flex; gap: 10px; align-items: center;
+  margin-top: 12px;
+}
+.welcome-nav .primary-btn { flex: 1; margin-top: 0; }
+.welcome-nav .cancel-btn {
+  flex-shrink: 0; padding: 0 20px; height: 52px;
+  border-radius: 26px;
+  font-size: 13px; font-weight: 500;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.26);
+  color: rgba(255,255,255,.62);
+  cursor: pointer;
+  transition: 0.2s;
+}
+.welcome-nav .cancel-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+.welcome-dots {
+  display: flex; justify-content: center; gap: 7px;
+  margin-top: 22px;
+}
+.welcome-dots span {
+  height: 6px; width: 6px; border-radius: 6px;
+  background: rgba(255,255,255,.28);
+  transition: 0.3s;
+}
+.welcome-dots span.active {
+  width: 24px;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+}
+
+.gender-select {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.gender-option {
+  height: 56px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.26);
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font: 500 15px var(--font-sans);
+  cursor: pointer;
+  transition: 0.2s;
+}
+.gender-option:hover { background: rgba(255,255,255,.12); }
+.gender-option.active {
+  border-color: #8f8bff;
+  background: rgba(91,91,255,.3);
+  box-shadow: 0 0 0 3px rgba(143,139,255,.22);
+}
+.gender-option .g-icon { font-size: 15px; }
+
+@media (max-width: 480px) {
+  .welcome-box { padding: 32px 24px 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .welcome-aurora i, .welcome-grid { animation: none; }
+}
+
+/* ============================================================
+   PAGE TRANSITION OVERLAY
+   ============================================================ */
 .page-transition-overlay {
   position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
   pointer-events: none; z-index: 500; opacity: 0;
@@ -258,6 +494,9 @@ button { cursor: pointer; border: none; background: none; }
   100% { transform: scale(2)    rotate(0deg);  opacity: 0; }
 }
 
+/* ============================================================
+   APP / SIDEBAR / PAGE
+   ============================================================ */
 .app { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
 .sidebar {
   width: 220px; background: var(--sidebar-bg);
@@ -367,25 +606,18 @@ button { cursor: pointer; border: none; background: none; }
 .install-tab:hover { color: var(--text); }
 .install-tab.active { color: var(--accent-primary-text); border-bottom-color: var(--accent-primary); }
 
-.install-step-row {
-  display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px;
-}
+.install-step-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
 .install-step-num {
   width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
   background: var(--badge-primary-bg); color: var(--accent-primary-text);
   display: grid; place-items: center; font-size: 12px; font-weight: 700;
 }
 .install-step-body { flex: 1; min-width: 0; }
-.install-step-title {
-  font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 3px;
-}
+.install-step-title { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
 .install-step-desc { font-size: 11px; color: var(--muted); line-height: 1.45; }
 .install-step-desc code {
   background: var(--surface-3); padding: 1px 6px; border-radius: 5px;
   font-family: 'SF Mono', Consolas, monospace; font-size: 10px; color: var(--accent-primary-text);
-}
-.install-step-icon-big {
-  font-size: 16px; margin-right: 4px; vertical-align: -2px;
 }
 .install-step-illustration {
   background: var(--surface-1); border: 1px solid var(--surface-2);
@@ -403,32 +635,21 @@ button { cursor: pointer; border: none; background: none; }
 .mobile-install-btn:active { transform: scale(0.92); }
 
 .page-container {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  height: 100vh;
-  height: 100dvh;
-  min-width: 0;
+  flex: 1; position: relative; overflow: hidden;
+  height: 100vh; height: 100dvh; min-width: 0;
 }
 .page-wrapper {
-  display: flex;
-  height: 100%;
-  align-items: stretch;
-  overflow: visible;
+  display: flex; height: 100%; align-items: stretch; overflow: visible;
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 .page {
-  min-width: 100%;
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-width: 100%; width: 100%;
+  height: 100vh; height: 100dvh;
+  overflow-y: auto; overflow-x: hidden;
   padding: 12px 20px 16px;
   background: var(--bg);
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
   transition: background-color 0.45s ease;
 }
 .page::-webkit-scrollbar { width: 4px; }
@@ -570,13 +791,7 @@ button { cursor: pointer; border: none; background: none; }
 .panel-scroll::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
 
 .timetable-wrapper { display: flex; flex-direction: column; height: 100%; overflow: hidden; gap: 8px; width: 100%; }
-.week-header {
-  display: grid;
-  grid-template-columns: 100px repeat(6, minmax(0, 1fr));
-  gap: 6px;
-  flex-shrink: 0;
-  width: 100%;
-}
+.week-header { display: grid; grid-template-columns: 100px repeat(6, minmax(0, 1fr)); gap: 6px; flex-shrink: 0; width: 100%; }
 .day-label {
   text-align: center; color: var(--muted); font-family: var(--font-serif);
   font-size: 12px; font-weight: 700; padding: 8px 4px; border-radius: 12px;
@@ -587,10 +802,8 @@ button { cursor: pointer; border: none; background: none; }
 .day-label.today { background: var(--badge-primary-bg); color: var(--accent-primary-text); border-color: var(--accent-primary); }
 .schedule-scroll { flex: 1; min-height: 0; overflow: hidden; display: flex; }
 .schedule-grid {
-  display: grid;
-  grid-template-columns: 100px repeat(6, minmax(0, 1fr));
-  grid-template-rows: repeat(7, minmax(0, 1fr));
-  gap: 6px;
+  display: grid; grid-template-columns: 100px repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(7, minmax(0, 1fr)); gap: 6px;
   flex: 1; min-height: 0; height: 100%; width: 100%;
 }
 .time-slot {
@@ -671,10 +884,8 @@ button { cursor: pointer; border: none; background: none; }
 
 #fullCalendar { display: flex; flex-direction: column; flex: 1.6; min-height: 0; min-width: 0; }
 .calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  grid-template-rows: auto;
-  grid-auto-rows: minmax(0, 1fr);
+  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: auto; grid-auto-rows: minmax(0, 1fr);
   gap: 5px; width: 100%; flex: 1; min-height: 0;
 }
 .cal-day {
@@ -730,9 +941,7 @@ button { cursor: pointer; border: none; background: none; }
 .moy-header, .moy-row {
   display: grid;
   grid-template-columns: minmax(0, 2.2fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 0.6fr) minmax(0, 0.55fr) 22px;
-  gap: 6px;
-  align-items: center;
-  width: 100%;
+  gap: 6px; align-items: center; width: 100%;
 }
 .moy-header { padding: 4px 8px; font-size: 8px; font-weight: 700; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
 .moy-header > span:nth-child(n+2):nth-child(-n+6) { text-align: center; }
@@ -773,41 +982,10 @@ button { cursor: pointer; border: none; background: none; }
 .empty-state { text-align: center; padding: 12px 8px; color: var(--muted); }
 .empty-state .emoji { font-size: 22px; margin-bottom: 4px; }
 .empty-state p { font-size: 10px; }
-.welcome-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; gap: 16px; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden; }
-.welcome-overlay::before { content: ''; position: absolute; inset: -20%; background: radial-gradient(circle at 15% 25%, rgba(96, 165, 250, 0.22), transparent 42%), radial-gradient(circle at 85% 75%, rgba(167, 139, 250, 0.20), transparent 42%); pointer-events: none; animation: floatGlow 18s ease-in-out infinite alternate; }
-@keyframes floatGlow { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(3%, -3%) scale(1.05); } }
-.welcome-overlay.hidden { opacity: 0; transform: scale(1.05); pointer-events: none; }
-.welcome-lang-toggle { position: absolute; top: 20px; right: 20px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 6px; border-radius: 40px; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; z-index: 2; }
-.welcome-lang-toggle:hover { border-color: var(--accent-primary); color: var(--text); }
-.welcome-lang-toggle .wl-icon { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary)); color: #FFFFFF; display: grid; place-items: center; font-size: 12px; }
-.welcome-box { background: var(--bg-card); backdrop-filter: blur(28px); border: 1px solid var(--border); border-radius: 28px; padding: 36px 40px 32px; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), 0 0 60px rgba(96, 165, 250, 0.20); animation: welcomeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1); position: relative; z-index: 1; }
-@keyframes welcomeIn { 0% { opacity: 0; transform: translateY(30px) scale(0.94); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-.welcome-logo-mark { width: 170px; height: 170px; margin: 0 auto 22px; display: block; position: relative; animation: logoFloat 5s ease-in-out infinite; }
-@keyframes logoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-.welcome-logo-mark:hover { transform: translateY(-4px) scale(1.05); animation-play-state: paused; }
-.welcome-logo-mark img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 18px 40px rgba(37, 99, 235, 0.40)); }
-.welcome-brand-name { font-family: var(--font-serif); font-size: 38px; font-weight: 700; margin-bottom: 4px; letter-spacing: 2px; display: inline-block; color: var(--text); }
-.welcome-box .logo-sub { color: var(--muted); font-size: 11px; margin-bottom: 24px; }
-.welcome-box .form-group { text-align: left; }
-.welcome-box .form-group input { text-align: center; font-size: 14px; padding: 12px 14px; border-radius: 12px; }
-.welcome-box .primary-btn { width: 100%; padding: 13px; font-size: 13px; font-weight: 700; margin-top: 10px; border-radius: 14px; }
-.welcome-step { display: none; }
-.welcome-step.active { display: block; animation: stepIn 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
-@keyframes stepIn { from { opacity: 0; transform: translateY(16px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
-.welcome-step-icon { font-size: 32px; line-height: 1; margin-bottom: 12px; }
-.welcome-step-title { font-family: var(--font-serif); font-size: 24px; font-weight: 700; margin-bottom: 20px; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
-.welcome-nav { display: flex; gap: 10px; align-items: center; margin-top: 16px; }
-.welcome-nav .primary-btn { flex: 1; width: auto; margin-top: 0; }
-.welcome-nav .cancel-btn { flex-shrink: 0; padding: 12px 18px; border-radius: 14px; font-size: 12px; border: 1px solid var(--border); }
-.welcome-dots { display: flex; gap: 6px; justify-content: center; margin-top: 22px; }
-.welcome-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--surface-4); }
-.welcome-dots span.active { width: 22px; border-radius: 6px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); }
-.gender-select { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
-.gender-option { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 14px; border-radius: 30px; background: var(--surface-2); border: 1.5px solid var(--border); cursor: pointer; flex: 1; color: var(--muted); font-size: 11.5px; font-weight: 600; }
-.gender-option:hover { background: var(--surface-3); border-color: var(--accent-primary); color: var(--text); }
-.gender-option.active { background: var(--badge-primary-bg); border-color: var(--accent-primary); color: var(--accent-primary-text); }
-.gender-option .g-icon { font-size: 15px; }
 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 1100px) {
   .sidebar { width: 190px; padding: 16px 12px; }
   .nav-item { font-size: 12px; padding: 10px 12px; gap: 10px; min-height: 44px; }
@@ -827,10 +1005,6 @@ button { cursor: pointer; border: none; background: none; }
   .kpi-card { padding: 8px 12px; }
   .topbar { flex-direction: column; align-items: stretch; gap: 4px; }
   .topbar-left { flex-wrap: wrap; }
-  .welcome-box { padding: 26px 22px; margin: 12px; border-radius: 22px; }
-  .welcome-logo-mark { width: 130px; height: 130px; margin-bottom: 18px; }
-  .welcome-brand-name { font-size: 32px; }
-  .welcome-step-title { font-size: 20px; }
   .form-row { grid-template-columns: 1fr; }
   .stats-bottom { grid-template-columns: 1fr 1fr; gap: 6px; }
   .stat-mini { padding: 6px 10px; }
@@ -841,8 +1015,7 @@ button { cursor: pointer; border: none; background: none; }
   .moy-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
   .moy-header, .moy-row {
     grid-template-columns: minmax(90px, 1.2fr) 34px 34px 34px 30px 28px 18px;
-    gap: 2px;
-    min-width: 280px;
+    gap: 2px; min-width: 280px;
   }
   .moy-input { padding: 3px 1px; font-size: 10px; }
   .moy-coef-display { font-size: 10px; padding: 3px 2px; }
@@ -877,8 +1050,7 @@ button { cursor: pointer; border: none; background: none; }
   .page[data-page="calendar"] { overflow-y: auto; }
 
   .page {
-    height: 100vh;
-    height: 100dvh;
+    height: 100vh; height: 100dvh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -902,8 +1074,8 @@ button { cursor: pointer; border: none; background: none; }
 @media (max-width: 480px) {
   .kpi-number { font-size: 17px; }
   .page-title { font-size: 16px; }
-  .welcome-brand-name { font-size: 28px; }
-  .welcome-logo-mark { width: 110px; height: 110px; }
+  .welcome-brand-name { font-size: 32px; }
+  .welcome-logo-mark { width: 100px; height: 100px; }
   .welcome-step-title { font-size: 18px; }
   .welcome-nav { flex-direction: column-reverse; }
   .welcome-nav .primary-btn, .welcome-nav .cancel-btn { width: 100%; }
@@ -916,30 +1088,39 @@ button { cursor: pointer; border: none; background: none; }
 </head>
 <body>
 
-<!-- WELCOME — 3 ÉTAPES -->
+<!-- ============================================================
+     ★ ENTRANCE — FOND TECH + CARTE GLASS ★
+     ============================================================ -->
 <div class="welcome-overlay" id="welcomeOverlay">
-  <button class="welcome-lang-toggle" id="welcomeLangToggle" onclick="toggleLanguage()">
+
+  <div class="welcome-bg" aria-hidden="true">
+    <div class="welcome-aurora"><i></i><i></i><i></i></div>
+    <div class="welcome-grid"></div>
+    <div class="welcome-horizon"></div>
+    <canvas id="net"></canvas>
+    <div class="welcome-vignette"></div>
+  </div>
+
+  <button class="welcome-lang-toggle" id="welcomeLangToggle" onclick="toggleLanguage()" aria-label="Langue">
     <span class="wl-icon">🌐</span>
     <span id="welcomeLangLabel">FR</span>
   </button>
 
   <div class="welcome-box">
+
     <div class="welcome-step active" data-step="1">
-      <div class="welcome-logo-mark">
-        <img src="logo.png" alt="UNIVA" />
-      </div>
-      <div class="welcome-brand-name univa-letters" aria-label="UNIVA">
-        <span>U</span><span>N</span><span>I</span><span>V</span><span>A</span>
-      </div>
+      <img class="welcome-logo-mark" id="welcomeLogo" src="logo.png" alt="UNIVA" />
+      <div class="welcome-brand-name">UNIVA</div>
       <div class="logo-sub" id="welcomeLogoSub">Intelligence · Organisation · Maîtrise</div>
-      <button class="primary-btn" id="startBtn">Commencer</button>
+      <button class="primary-btn" id="startBtn" style="margin-top:0;">Commencer</button>
     </div>
 
     <div class="welcome-step" data-step="2">
       <div class="welcome-step-icon">👋</div>
-      <div class="welcome-step-title univa-pop" id="welcomeNameLabel">Quel est ton prénom ?</div>
+      <div class="welcome-step-title" id="welcomeNameLabel">Quel est ton prénom ?</div>
+      <div class="welcome-step-sub" id="welcomeNameSub">On personnalise ton espace.</div>
       <div class="form-group">
-        <input type="text" id="nameInput" placeholder="Ton prénom…" autocomplete="given-name" />
+        <input type="text" id="nameInput" placeholder="Ton prénom…" maxlength="24" autocomplete="given-name" />
       </div>
       <div class="welcome-nav">
         <button class="cancel-btn" id="backToStep1" onclick="goToStep(1)">← Retour</button>
@@ -949,7 +1130,8 @@ button { cursor: pointer; border: none; background: none; }
 
     <div class="welcome-step" data-step="3">
       <div class="welcome-step-icon">🎓</div>
-      <div class="welcome-step-title univa-pop" id="welcomeGenderLabel">Je suis :</div>
+      <div class="welcome-step-title" id="welcomeGenderLabel">Je suis :</div>
+      <div class="welcome-step-sub" id="welcomeGenderSub">Choisis ce qui te correspond.</div>
       <div class="gender-select">
         <div class="gender-option active" data-gender="female" onclick="selectGender('female')">
           <span class="g-icon">♀</span>
@@ -972,7 +1154,9 @@ button { cursor: pointer; border: none; background: none; }
   </div>
 </div>
 
-<!-- APP -->
+<!-- ============================================================
+     APP
+     ============================================================ -->
 <div class="app" id="appContainer" style="display:none;">
 
   <aside class="sidebar">
@@ -1306,12 +1490,104 @@ button { cursor: pointer; border: none; background: none; }
 <div class="toast" id="toast"></div>
 
 <script>
+/* ============================================================
+   ★ ANIMATION DU FOND TECH (canvas #net) ★
+   — Particules connectées + réaction souris (identique au fichier Background)
+   ============================================================ */
+(function welcomeNetAnim() {
+  const c = document.getElementById('net');
+  if (!c) return;
+  const x = c.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let W, H, P = [], m = { x: -999, y: -999 };
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  const cols = ['125,211,252', '147,197,253', '167,139,250'];
+
+  function size() {
+    W = innerWidth; H = innerHeight;
+    c.width = W * dpr; c.height = H * dpr;
+    x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.min(130, Math.round(W * H / 13000));
+    P = Array.from({ length: n }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H * 0.78,
+      vx: (Math.random() - .5) * .35,
+      vy: (Math.random() - .5) * .35,
+      r: Math.random() * 1.6 + .8,
+      c: cols[Math.random() * 3 | 0],
+      p: Math.random() * 6.28
+    }));
+    if (still) draw(0);
+  }
+
+  function draw(t) {
+    const overlay = document.getElementById('welcomeOverlay');
+    if (!overlay) { if (!still) requestAnimationFrame(draw); return; }
+    if (overlay.classList.contains('hidden')) {
+      if (!still) requestAnimationFrame(draw);
+      return;
+    }
+
+    x.clearRect(0, 0, W, H);
+    const L = 140;
+    for (let i = 0; i < P.length; i++) {
+      const a = P[i];
+      for (let j = i + 1; j < P.length; j++) {
+        const b = P[j];
+        const dx = a.x - b.x, dy = a.y - b.y, d = dx * dx + dy * dy;
+        if (d < L * L) {
+          const o = (1 - Math.sqrt(d) / L) * .42;
+          x.strokeStyle = 'rgba(125,180,255,' + o + ')';
+          x.lineWidth = .8;
+          x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(b.x, b.y); x.stroke();
+        }
+      }
+      const mx = a.x - m.x, my = a.y - m.y, md = Math.hypot(mx, my);
+      if (md < 170) {
+        const o = (1 - md / 170) * .8;
+        x.strokeStyle = 'rgba(167,139,250,' + o + ')';
+        x.lineWidth = 1;
+        x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(m.x, m.y); x.stroke();
+        a.vx += -mx / md * .004;
+        a.vy += -my / md * .004;
+      }
+    }
+    for (const a of P) {
+      const g = .6 + .4 * Math.sin(t / 900 + a.p);
+      x.fillStyle = 'rgba(' + a.c + ',' + g + ')';
+      x.shadowColor = 'rgba(' + a.c + ',.9)';
+      x.shadowBlur = 10;
+      x.beginPath(); x.arc(a.x, a.y, a.r, 0, 6.283); x.fill();
+      if (!still) {
+        a.x += a.vx; a.y += a.vy;
+        a.vx = Math.max(-.5, Math.min(.5, a.vx));
+        a.vy = Math.max(-.5, Math.min(.5, a.vy));
+        if (a.x < 0 || a.x > W) a.vx *= -1;
+        if (a.y < 0 || a.y > H * .8) a.vy *= -1;
+      }
+    }
+    x.shadowBlur = 0;
+    if (!still) requestAnimationFrame(draw);
+  }
+
+  addEventListener('resize', size);
+  addEventListener('pointermove', e => { m.x = e.clientX; m.y = e.clientY; });
+  addEventListener('pointerleave', () => { m.x = m.y = -999; });
+  size();
+  if (!still) requestAnimationFrame(draw);
+})();
+
+/* ============================================================
+   TRANSLATIONS
+   ============================================================ */
 const TRANSLATIONS = {
   fr: {
     logo_sub: "Intelligence · Organisation · Maîtrise",
     welcome_start: "Commencer", welcome_continue: "Continuer", welcome_back: "Retour",
     welcome_question: "Quel est ton prénom ?", welcome_name_placeholder: "Ton prénom…",
-    welcome_gender: "Je suis :", gender_female: "Étudiante", gender_male: "Étudiant",
+    welcome_name_sub: "On personnalise ton espace.",
+    welcome_gender: "Je suis :", welcome_gender_sub: "Choisis ce qui te correspond.",
+    gender_female: "Étudiante", gender_male: "Étudiant",
     welcome_enter: "Entrer dans l'espace",
     nav_space: "Espace", nav_dashboard: "Tableau", nav_moyenne: "Moyenne",
     nav_timetable: "Emploi du temps", nav_homework: "Tâches", nav_exams: "Examens", nav_calendar: "Calendrier",
@@ -1381,7 +1657,9 @@ const TRANSLATIONS = {
     logo_sub: "Intelligence · Organisation · Mastery",
     welcome_start: "Get started", welcome_continue: "Continue", welcome_back: "Back",
     welcome_question: "What's your first name?", welcome_name_placeholder: "Your first name…",
-    welcome_gender: "I am:", gender_female: "Female student", gender_male: "Male student",
+    welcome_name_sub: "Let's personalize your space.",
+    welcome_gender: "I am:", welcome_gender_sub: "Pick what fits you.",
+    gender_female: "Female student", gender_male: "Male student",
     welcome_enter: "Enter the space",
     nav_space: "Space", nav_dashboard: "Dashboard", nav_moyenne: "Average",
     nav_timetable: "Timetable", nav_homework: "Tasks", nav_exams: "Exams", nav_calendar: "Calendar",
@@ -1557,6 +1835,10 @@ function updateWelcomeTranslations() {
   document.getElementById('backToStep1').textContent = '← ' + t('welcome_back');
   document.getElementById('backToStep2').textContent = '← ' + t('welcome_back');
   document.getElementById('nameInput').placeholder = t('welcome_name_placeholder');
+  const nameSub = document.getElementById('welcomeNameSub');
+  if (nameSub) nameSub.textContent = t('welcome_name_sub');
+  const genderSub = document.getElementById('welcomeGenderSub');
+  if (genderSub) genderSub.textContent = t('welcome_gender_sub');
 }
 
 function updateGreeting() {
@@ -1622,12 +1904,7 @@ function getStorageKey() {
   return STORAGE_KEY_BASE + '_' + u;
 }
 
-/* ============================================================
-   DONNÉES PAR DÉFAUT — 2 SEMESTRES UNIQUEMENT
-   ⚠️  CRÉDITS (ECTS) ≠ COEFFICIENTS
-   ============================================================ */
 function getDefaultData() {
-  // subj(id, nom, couleur, CRÉDITS, COEFFICIENT, semestre)
   const subj = (id, name, color, credits, coef, semester) => ({
     id, name, color, credits, coef, semester, oral: null, ds: null, exam: null
   });
@@ -1635,7 +1912,6 @@ function getDefaultData() {
   return {
     subjects: [
       /* ==================== SEMESTRE 1 ==================== */
-      // Total : 30 crédits / 15 coef
       subj('s1_1', 'Fondamentaux du Management',  'blue',   5, 2.5, 1),
       subj('s1_2', 'Comptabilité de Gestion',      'green',  5, 2.5, 1),
       subj('s1_3', 'Fondamentaux du Marketing',    'orange', 5, 2.5, 1),
@@ -1646,7 +1922,6 @@ function getDefaultData() {
       subj('s1_8', 'Statistique Inférentielle',    'teal',   2, 1,   1),
 
       /* ==================== SEMESTRE 2 ==================== */
-      // Total : 30 crédits / 15 coef
       subj('s2_1', 'Fondamentaux de la GRH',                                'blue',   5, 2.5, 2),
       subj('s2_2', 'Diagnostic Financier',                                  'green',  5, 2.5, 2),
       subj('s2_3', 'Gestion de la Production',                              'orange', 5, 2.5, 2),
@@ -1878,9 +2153,6 @@ function renderAll() {
   updateAllStats();
 }
 
-/* ============================================================
-   CALCULS — MOYENNE = COEFFICIENTS · VALIDATION = CRÉDITS
-   ============================================================ */
 function calculateGPA() {
   const complete = data.subjects.filter(isSubjectComplete);
   if (complete.length === 0) return null;
@@ -2736,7 +3008,7 @@ function showToast(msg) {
 }
 
 /* ============================================================
-   GESTION DE L'INSTALLATION PWA
+   PWA INSTALL
    ============================================================ */
 let deferredPrompt = null;
 const sidebarInstallBtn = document.getElementById('sidebarInstallBtn');
@@ -2830,6 +3102,8 @@ wrapper.style.transform = 'translateX(0)';
 const pages = wrapper.querySelectorAll('.page');
 pages.forEach(p => p.style.minWidth = '100%');
 
+
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js')
@@ -2838,7 +3112,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-console.log('✨ UNIVA · v10 · 2 semestres uniquement (S1 + S2)');
+console.log('✨ UNIVA · v12 · Tech background (particules connectées)');
 </script>
 </body>
 </html>
