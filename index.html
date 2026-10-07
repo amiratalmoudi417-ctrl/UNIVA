@@ -214,48 +214,115 @@ button { cursor: pointer; border: none; background: none; }
 .mobile-theme-btn { display: none; }
 
 /* ============================================================
-   ★ ENTRANCE — MODÈLE 3 ANIMÉ (Logo seul) ★
+   ★ ENTRANCE — MODÈLE 3 · ICÔNES FLOTTANTES ★
    ============================================================ */
 .welcome-overlay {
   position: fixed; inset: 0; z-index: 1000;
-  display: grid; place-items: center;
-  padding: 24px 16px;
+  display: flex; align-items: center; justify-content: center;
   overflow: hidden;
+  color: #e8ebff;
   background:
     radial-gradient(ellipse at 15% 10%, #0d1f5c 0, transparent 45%),
     radial-gradient(ellipse at 90% 20%, #1d1250 0, transparent 40%),
     radial-gradient(ellipse at 50% 115%, #0a3a6b 0, transparent 40%),
     #050818;
-  color: #e8ebff;
   transition: opacity 0.6s, visibility 0.6s;
+  font-family: Manrope, Inter, sans-serif;
 }
 .welcome-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-/* --- Réseau décoratif SVG (lignes + points) --- */
-.welcome-network {
+/* --- Réseau SVG + rayons --- */
+.wn-network {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   opacity: 0.35;
   pointer-events: none;
 }
-.welcome-network .wn-line {
-  stroke: #5b7bd6; stroke-width: 1;
-  stroke-dasharray: 1; stroke-dashoffset: 1;
+.wn-network .ln {
+  stroke: #5b7bd6; stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 1;
   animation: wn-draw 3.5s ease-out 0.3s forwards;
 }
-.welcome-network .wn-dot {
+.wn-network .nd {
   fill: #7aa2ff;
   transform-box: fill-box; transform-origin: center;
   animation: wn-tw 3s ease-in-out infinite;
 }
-.welcome-network .wn-dot:nth-child(3n)   { animation-delay: .8s; }
-.welcome-network .wn-dot:nth-child(3n+1) { animation-delay: 1.6s; }
+.wn-network .nd:nth-child(3n)   { animation-delay: .8s; }
+.wn-network .nd:nth-child(3n+1) { animation-delay: 1.6s; }
+
+.wn-beam {
+  position: absolute; left: -400px; top: -120px;
+  width: 260px; height: 960px;
+  background: linear-gradient(90deg, transparent, rgba(130,150,255,.08), transparent);
+  animation: wn-beam 15s linear infinite;
+  pointer-events: none;
+}
+
+/* --- Particules qui montent --- */
+.wn-p {
+  position: absolute; bottom: -8px; border-radius: 50%;
+  background: #9db6ff; pointer-events: none;
+  animation: wn-pt 12s linear infinite;
+}
+
+/* --- Étoiles filantes --- */
+.wn-sk {
+  position: absolute; width: 110px; height: 2px;
+  background: linear-gradient(90deg, transparent, #fff);
+  box-shadow: 0 0 8px #9db6ff;
+  opacity: 0; pointer-events: none;
+  animation: wn-shoot 9s linear infinite;
+}
+
+/* --- Grille au sol --- */
+.wn-fw {
+  position: absolute; left: 0; bottom: 0;
+  width: 100%; height: 84px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent, #000 25%, #000 65%, transparent);
+  mask-image: linear-gradient(transparent, #000 25%, #000 65%, transparent);
+  pointer-events: none;
+}
+.wn-fg {
+  position: absolute; left: -50%; top: 0;
+  width: 200%; height: 400px;
+  transform: perspective(220px) rotateX(55deg);
+  transform-origin: 50% 0;
+  background-image:
+    linear-gradient(rgba(110,150,255,.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110,150,255,.4) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: wn-grid 2.5s linear infinite;
+}
+
+/* --- Ligne d'horizon --- */
+.wn-horizon {
+  position: absolute; left: 0; right: 0; bottom: 84px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(143,168,255,.6), transparent);
+  pointer-events: none;
+}
+
+/* --- Lignes connectrices SVG (autour du logo) --- */
+.wn-lines {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  animation: wn-fi 2s ease 1.6s both;
+}
+.wn-lines line { stroke: rgba(143,168,255,.28); stroke-width: 1; }
+.wn-lines .lf {
+  stroke: #c3d4ff; stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 5 95; stroke-dashoffset: 0;
+  animation: wn-flow 4s linear infinite;
+  filter: drop-shadow(0 0 4px #8fb0ff);
+}
 
 /* --- Bouton langue (top right) --- */
 .welcome-lang-toggle {
   position: absolute;
   top: calc(20px + env(safe-area-inset-top, 0px));
-  right: 20px; z-index: 3;
+  right: 20px; z-index: 5;
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 14px 8px 8px;
   border-radius: 99px;
@@ -268,170 +335,250 @@ button { cursor: pointer; border: none; background: none; }
   -webkit-backdrop-filter: blur(10px);
   transition: border-color .2s;
 }
-.welcome-lang-toggle:hover { border-color: var(--accent-primary); }
+.welcome-lang-toggle:hover { border-color: #8fa8ff; }
 .welcome-lang-toggle .wl-icon {
   width: 22px; height: 22px; border-radius: 50%;
   background: linear-gradient(135deg, #38bdf8, #5b5bff);
   display: grid; place-items: center; font-size: 12px; line-height: 1;
 }
 
-/* --- Conteneur central (stage) --- */
+/* --- Conteneur central --- */
 .welcome-box {
-  position: relative; z-index: 2;
+  position: relative; z-index: 3;
   display: flex; flex-direction: column;
   align-items: center;
-  gap: 30px;
+  justify-content: center;
   width: 100%; max-width: 520px;
+  padding: 20px 16px;
   text-align: center;
-  animation: welcomeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-@keyframes welcomeIn {
-  0% { opacity: 0; transform: translateY(30px) scale(0.94); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  animation: wn-fi 0.7s ease;
 }
 
-/* --- Logo SVG + halo --- */
-.welcome-logo-block {
+/* --- Icônes flottantes --- */
+.wn-icons {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.wn-ic {
+  position: absolute;
+  opacity: 0;
+  animation: wn-fly 1.3s cubic-bezier(.2,.9,.3,1.15) both;
+}
+.wn-ic-inner {
+  width: 100%; height: 100%;
+  animation-duration: 10s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.wn-ic-inner.a { animation-name: wn-fa; }
+.wn-ic-inner.b { animation-name: wn-fb; }
+.wn-ic-inner.c { animation-name: wn-fc; }
+
+.wn-ic-tile {
+  position: relative; overflow: hidden;
+  width: 100%; height: 100%;
+  box-sizing: border-box;
+  border-radius: 28%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--c, #8fb8ff);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.03)),
+    rgba(14,20,64,.8);
+  border: 1px solid rgba(255,255,255,.24);
+  box-shadow:
+    0 16px 36px rgba(0,0,0,.45),
+    0 0 30px rgba(110,130,255,.25),
+    inset 0 1px 0 rgba(255,255,255,.4);
+}
+.wn-ic-tile svg { filter: drop-shadow(0 0 7px var(--c, #8fb8ff)); }
+.wn-ic-tile::after {
+  content: "";
+  position: absolute;
+  top: -20%; bottom: -20%; width: 40%; left: -60%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: skewX(-15deg);
+  animation: wn-tsh 6s ease-in-out infinite;
+  animation-delay: var(--sd, 0s);
+}
+
+/* --- Halo + ripples --- */
+.wn-halo {
+  position: absolute; left: 50%; top: 50%;
+  width: clamp(180px, 22vw, 264px);
+  height: clamp(180px, 22vw, 264px);
+  margin: calc(clamp(180px, 22vw, 264px) / -2) 0 0 calc(clamp(180px, 22vw, 264px) / -2);
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0, #63a4ff 25%, #a78bfa 45%, transparent 60%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  filter: drop-shadow(0 0 10px rgba(130,150,255,.9));
+  opacity: 0;
+  animation: wn-spin 7s linear infinite, wn-fade 1.5s ease 1.2s forwards;
+  pointer-events: none;
+}
+.wn-rip {
+  position: absolute; left: 50%; top: 50%;
+  width: 200px; height: 200px;
+  margin: -100px 0 0 -100px;
+  border-radius: 50%;
+  border: 1px solid rgba(143,168,255,.5);
+  opacity: 0;
+  animation: wn-ripple 4s ease-out 1.8s infinite;
+  pointer-events: none;
+}
+.wn-rip:nth-child(2) { animation-delay: 3.8s; }
+
+/* --- Logo --- */
+.wn-logo-wrap {
   position: relative;
   display: flex; flex-direction: column; align-items: center;
   gap: 6px;
-  animation: wn-float 6s ease-in-out 2s infinite;
+  animation: wn-float 7s ease-in-out 2.6s infinite;
 }
-.welcome-glow {
-  position: absolute;
-  left: 50%; top: 50%;
-  width: 520px; height: 360px;
-  margin: -180px 0 0 -260px;
-  background: radial-gradient(closest-side, rgba(110,120,255,.45), transparent);
-  pointer-events: none;
-  animation: wn-breathe 5s ease-in-out infinite;
-}
-.welcome-logo-svg {
-  position: relative;
-  width: clamp(110px, 22vw, 150px);
+.wn-logo-svg {
+  width: clamp(110px, 14vw, 168px);
   height: auto;
-  display: block;
+  filter: drop-shadow(0 0 18px rgba(110,120,255,.55));
+  animation: wn-pop 1s cubic-bezier(.2,.8,.2,1) .3s both;
 }
-.welcome-logo-svg .body { animation: wn-pop 1s cubic-bezier(.2,.8,.2,1) .2s both; }
-.welcome-logo-svg .cap  {
-  animation: wn-drop .9s cubic-bezier(.2,.8,.2,1) .9s both;
+.wn-logo-svg .cap {
   transform-box: fill-box; transform-origin: center;
+  animation: wn-drop .9s cubic-bezier(.2,.8,.2,1) 1s both;
+}
+.wn-logo-svg .tassel {
+  transform-box: fill-box; transform-origin: 50% 0;
+  animation: wn-swing 3.2s ease-in-out 2s infinite;
 }
 
-.welcome-brand-name {
+.wn-brand {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 700;
-  letter-spacing: 3px;
-  font-size: clamp(48px, 10vw, 75px);
+  letter-spacing: 10px;
+  text-indent: 10px;
+  font-size: clamp(46px, 7.5vw, 84px);
   line-height: 1.1;
-  color: #d7d9fb;
   display: inline-block;
 }
-.welcome-brand-name span {
+.wn-brand span {
   display: inline-block;
+  background-image: linear-gradient(100deg, #aab8f5 0%, #d7d9fb 35%, #fff 50%, #d7d9fb 65%, #aab8f5 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
   opacity: 0;
-  animation: wn-rise .7s cubic-bezier(.2,.8,.2,1) both;
+  animation:
+    wn-rise .8s cubic-bezier(.2,.8,.2,1) both,
+    wn-sheen 5s linear infinite;
 }
-.welcome-brand-name span:nth-child(1){ animation-delay: 1.00s; }
-.welcome-brand-name span:nth-child(2){ animation-delay: 1.09s; }
-.welcome-brand-name span:nth-child(3){ animation-delay: 1.18s; }
-.welcome-brand-name span:nth-child(4){ animation-delay: 1.27s; }
-.welcome-brand-name span:nth-child(5){ animation-delay: 1.36s; }
+.wn-brand span:nth-child(1) { animation-delay: 1.20s, 2.40s; }
+.wn-brand span:nth-child(2) { animation-delay: 1.30s, 2.52s; }
+.wn-brand span:nth-child(3) { animation-delay: 1.40s, 2.64s; }
+.wn-brand span:nth-child(4) { animation-delay: 1.50s, 2.76s; }
+.wn-brand span:nth-child(5) { animation-delay: 1.60s, 2.88s; }
 
-.welcome-box .logo-sub {
-  font-size: clamp(12px, 3vw, 15px);
-  color: #9aa0c8;
+/* --- Séparateur --- */
+.wn-sep {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
   opacity: 0;
-  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 1.6s both;
+  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 2s both;
+}
+.wn-sep i {
+  width: clamp(60px, 8vw, 100px); height: 1px;
+  background: linear-gradient(90deg, transparent, #8fa8ff);
+}
+.wn-sep i:last-child { background: linear-gradient(270deg, transparent, #8fa8ff); }
+.wn-sep b {
+  width: 7px; height: 7px;
+  transform: rotate(45deg);
+  background: #a78bfa;
+  box-shadow: 0 0 10px #a78bfa;
 }
 
 /* --- Bouton principal --- */
-/* ★ Les boutons des étapes 2 et 3 apparaissent immédiatement */
-.welcome-step[data-step="2"] .primary-btn,
-.welcome-step[data-step="3"] .primary-btn {
-  opacity: 1;
-  animation: none;
+.wn-btn-wrap {
+  margin-top: 42px;
+  width: min(380px, 88vw);
+  opacity: 0;
+  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 2.1s both;
 }
-.welcome-box .primary-btn {
+.wn-btn-outer { position: relative; }
+.wn-btn-ripple {
+  position: absolute; inset: 0;
+  border-radius: 99px;
+  border: 2px solid #8fa8ff;
+  animation: wn-ping 2.6s ease-out 2.8s infinite;
+  pointer-events: none;
+}
+.wn-btn {
   position: relative;
   overflow: hidden;
-  width: 100%;
-  max-width: 380px;
-  padding: 16px;
-  border: 0;
+  display: flex; justify-content: center; align-items: center;
+  gap: 10px;
+  padding: 17px;
   border-radius: 99px;
-  text-align: center;
-  font: 800 15px Manrope, Inter, sans-serif;
-  color: #0a0f2c;
   background: linear-gradient(90deg, #63a4ff, #a78bfa);
+  color: #0a0f2c;
+  font: 800 15px Manrope, Inter, sans-serif;
   box-shadow: 0 8px 30px rgba(120,130,255,.4);
   cursor: pointer;
   transition: transform .15s, filter .2s;
-  opacity: 0;
-  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 1.8s both, wn-glow 3s ease-in-out 2.5s infinite;
+  animation: wn-glowBtn 3s ease-in-out 2.8s infinite;
+  width: 100%;
 }
-.welcome-box .primary-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.welcome-box .primary-btn:active { transform: scale(0.99); }
-.welcome-box .primary-btn[disabled] { opacity: 0.45; cursor: not-allowed; filter: none; }
-
-.welcome-btn-shine {
-  position: absolute;
-  top: 0; bottom: 0; width: 30%;
-  left: -40%;
+.wn-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.wn-btn:active { transform: scale(0.98); }
+.wn-btn .arrow {
+  animation: wn-nudge 1.6s ease-in-out 3s infinite;
+}
+.wn-btn .shine {
+  position: absolute; top: 0; bottom: 0; width: 30%; left: -40%;
   background: linear-gradient(100deg, transparent, rgba(255,255,255,.6), transparent);
-  animation: wn-shine 4.5s ease-in-out 2.6s infinite;
+  animation: wn-shine 4.5s ease-in-out 2.9s infinite;
   pointer-events: none;
 }
 
-/* --- Bouton secondaire (retour) --- */
-.welcome-box .cancel-btn {
-  flex-shrink: 0; padding: 0 20px; height: 52px;
-  border-radius: 26px;
-  font-size: 13px; font-weight: 600;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.16);
-  color: rgba(255,255,255,.72);
-  cursor: pointer;
-  transition: .2s;
-}
-.welcome-box .cancel-btn:hover { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.3); }
-
-/* --- Indicateurs (dots) --- */
-.welcome-dots {
-  display: flex; justify-content: center; gap: 8px;
+/* --- Dots indicateurs --- */
+.wn-dots {
+  display: flex; gap: 8px; justify-content: center;
+  margin-top: 40px;
   opacity: 0;
-  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 2.2s both;
+  animation: wn-rise .8s cubic-bezier(.2,.8,.2,1) 2.4s both;
 }
-.welcome-dots span {
+.wn-dots .d {
   width: 8px; height: 8px; border-radius: 9px;
   background: rgba(255,255,255,.25);
-  transition: 0.3s;
+  animation: wn-dotPulse 6s ease-in-out infinite;
+  transition: background 0.3s, width 0.3s;
 }
-.welcome-dots span.active {
+.wn-dots .d:nth-child(2) { animation-delay: 2s; }
+.wn-dots .d:nth-child(3) { animation-delay: 4s; }
+.wn-dots .d.active {
   width: 24px;
-  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  background: #8fa8ff;
+  animation: none;
 }
 
-/* --- Étapes 2 et 3 --- */
+/* --- Étapes 2 / 3 --- */
 .welcome-step { display: none; width: 100%; }
-.welcome-step.active { display: block; animation: stepIn 0.5s cubic-bezier(.2,.8,.2,1); }
-@keyframes stepIn { from { opacity: 0; transform: translateY(16px); } }
+.welcome-step.active { display: block; animation: wn-stepIn 0.5s cubic-bezier(.2,.8,.2,1); }
+@keyframes wn-stepIn { from { opacity: 0; transform: translateY(16px); } }
 
 .welcome-step-title {
   margin: 0 0 8px;
-  font: 500 clamp(22px, 5.5vw, 28px)/1.2 Manrope, Inter, sans-serif;
+  font: 800 clamp(22px, 4.5vw, 28px)/1.2 Manrope, Inter, sans-serif;
   letter-spacing: -0.01em;
   color: #fff;
-  display: block;
   text-align: center;
 }
 .welcome-step-sub {
   margin: 0 0 22px;
   font-size: 13px;
-  color: rgba(255,255,255,.62);
+  color: rgba(232,235,255,.62);
   text-align: center;
 }
-
 .welcome-box .form-group { text-align: left; margin-bottom: 0; }
 .welcome-box .form-group input {
   width: 100%; height: 54px;
@@ -455,7 +602,26 @@ button { cursor: pointer; border: none; background: none; }
   display: flex; gap: 10px; align-items: center;
   margin-top: 14px;
 }
-.welcome-nav .primary-btn { flex: 1; margin-top: 0; max-width: none; padding: 14px; }
+.welcome-nav .wn-btn {
+  flex: 1;
+  padding: 14px;
+}
+.welcome-nav .cancel-btn {
+  flex-shrink: 0;
+  padding: 14px 20px;
+  border-radius: 99px;
+  font: 600 13px Manrope, Inter, sans-serif;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.22);
+  color: rgba(255,255,255,.72);
+  cursor: pointer;
+  transition: .2s;
+}
+.welcome-nav .cancel-btn:hover {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border-color: rgba(255,255,255,.35);
+}
 
 .gender-select {
   display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
@@ -479,25 +645,57 @@ button { cursor: pointer; border: none; background: none; }
 }
 .gender-option .g-icon { font-size: 16px; }
 
-/* --- Animations --- */
-@keyframes wn-rise  { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
-@keyframes wn-pop   { 0% { opacity: 0; transform: scale(.6); filter: blur(12px); } 100% { opacity: 1; transform: scale(1); filter: blur(0); } }
-@keyframes wn-drop  { 0% { opacity: 0; transform: translateY(-30px) rotate(-10deg); } 60% { opacity: 1; transform: translateY(5px) rotate(2deg); } 100% { opacity: 1; transform: none; } }
-@keyframes wn-float { 50% { transform: translateY(-10px); } }
-@keyframes wn-breathe { 50% { opacity: .55; transform: scale(1.1); } }
-@keyframes wn-draw  { to { stroke-dashoffset: 0; } }
-@keyframes wn-tw    { 50% { opacity: .25; transform: scale(1.9); } }
-@keyframes wn-shine { 0% { left: -40%; } 55%, 100% { left: 130%; } }
-@keyframes wn-glow  { 50% { box-shadow: 0 8px 48px rgba(140,150,255,.75); } }
+/* --- Keyframes --- */
+@keyframes wn-fi      { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wn-rise    { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes wn-pop     { 0% { opacity: 0; transform: scale(.6); filter: blur(12px); } 100% { opacity: 1; transform: scale(1); filter: blur(0); } }
+@keyframes wn-drop    { 0% { opacity: 0; transform: translateY(-30px) rotate(-10deg); } 60% { opacity: 1; transform: translateY(5px) rotate(2deg); } 100% { opacity: 1; transform: none; } }
+@keyframes wn-swing   { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg); } }
+@keyframes wn-float   { 50% { transform: translateY(-9px); } }
+@keyframes wn-breathe { 50% { opacity: .55; transform: scale(1.12); } }
+@keyframes wn-draw    { to { stroke-dashoffset: 0; } }
+@keyframes wn-tw      { 50% { opacity: .25; transform: scale(1.9); } }
+@keyframes wn-sheen   { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+@keyframes wn-spin    { to { transform: rotate(360deg); } }
+@keyframes wn-fade    { to { opacity: .9; } }
+@keyframes wn-ripple  { 0% { transform: scale(.8); opacity: .55; } 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes wn-grid    { to { background-position: 0 60px; } }
+@keyframes wn-pt      { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .85; } 100% { transform: translateY(-640px); opacity: 0; } }
+@keyframes wn-shoot   { 0% { opacity: 0; transform: translate(0,0) rotate(150deg); } 2% { opacity: 1; } 12%,100% { opacity: 0; transform: translate(-420px,242px) rotate(150deg); } }
+@keyframes wn-beam    { from { transform: translateX(0) rotate(20deg); } to { transform: translateX(2100px) rotate(20deg); } }
+@keyframes wn-nudge   { 50% { transform: translateX(6px); } }
+@keyframes wn-ping    { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.15, 1.8); opacity: 0; } }
+@keyframes wn-shine   { 0% { left: -40%; } 55%, 100% { left: 130%; } }
+@keyframes wn-glowBtn { 50% { box-shadow: 0 8px 48px rgba(140,150,255,.8); } }
+@keyframes wn-dotPulse{ 0%, 30% { width: 24px; background: #8fa8ff; } 38%, 100% { width: 8px; background: rgba(255,255,255,.25); } }
+@keyframes wn-fly     { from { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.15); } to { opacity: var(--o); transform: none; } }
+@keyframes wn-fa      { 0%, 100% { transform: perspective(500px) translate(0, 0) rotateY(-12deg) rotateX(5deg); } 50% { transform: perspective(500px) translate(calc(10px * var(--k)), calc(-24px * var(--k))) rotateY(14deg) rotateX(-6deg); } }
+@keyframes wn-fb      { 0%, 100% { transform: perspective(500px) translate(0, 0) rotateY(12deg) rotateX(-4deg); } 50% { transform: perspective(500px) translate(calc(-12px * var(--k)), calc(-18px * var(--k))) rotateY(-14deg) rotateX(6deg); } }
+@keyframes wn-fc      { 0%, 100% { transform: perspective(500px) translate(0, 0) rotate(-5deg) rotateY(-8deg); } 25% { transform: perspective(500px) translate(calc(14px * var(--k)), calc(-10px * var(--k))) rotate(2deg) rotateY(10deg); } 50% { transform: perspective(500px) translate(calc(4px * var(--k)), calc(-26px * var(--k))) rotate(6deg) rotateY(4deg); } 75% { transform: perspective(500px) translate(calc(-12px * var(--k)), calc(-12px * var(--k))) rotate(-2deg) rotateY(-10deg); } }
+@keyframes wn-tsh     { 0% { left: -60%; } 35%, 100% { left: 140%; } }
+@keyframes wn-flow    { to { stroke-dashoffset: -100; } }
 
-@media (max-width: 480px) {
-  .welcome-box { gap: 22px; }
-}
 @media (prefers-reduced-motion: reduce) {
-  .welcome-overlay *, .welcome-overlay *::before, .welcome-overlay *::after {
+  .welcome-overlay *,
+  .welcome-overlay *::before,
+  .welcome-overlay *::after {
     animation: none !important; opacity: 1 !important; transform: none !important;
   }
-  .welcome-network .wn-line { stroke-dasharray: none; stroke-dashoffset: 0; }
+  .wn-network .ln { stroke-dasharray: none; stroke-dashoffset: 0; }
+  .wn-lines .lf   { display: none; }
+}
+
+/* --- Mobile : cacher quelques icônes --- */
+@media (max-width: 750px) {
+  .wn-ic[data-mobile="hide"] { display: none; }
+  .wn-brand { letter-spacing: 6px; text-indent: 6px; }
+}
+@media (max-width: 480px) {
+  .wn-icons { display: none; }
+  .wn-btn-wrap { margin-top: 32px; }
+  .wn-dots { margin-top: 32px; }
+  .welcome-nav { flex-direction: column-reverse; }
+  .welcome-nav .wn-btn, .welcome-nav .cancel-btn { width: 100%; }
 }
 
 /* ============================================================
@@ -1019,9 +1217,6 @@ button { cursor: pointer; border: none; background: none; }
 .empty-state .emoji { font-size: 22px; margin-bottom: 4px; }
 .empty-state p { font-size: 10px; }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
 @media (max-width: 1100px) {
   .sidebar { width: 190px; padding: 16px 12px; }
   .nav-item { font-size: 12px; padding: 10px 12px; gap: 10px; min-height: 44px; }
@@ -1116,9 +1311,8 @@ button { cursor: pointer; border: none; background: none; }
 @media (max-width: 480px) {
   .kpi-number { font-size: 17px; }
   .page-title { font-size: 16px; }
-  .welcome-box { gap: 22px; }
   .welcome-nav { flex-direction: column-reverse; }
-  .welcome-nav .primary-btn, .welcome-nav .cancel-btn { width: 100%; }
+  .welcome-nav .wn-btn, .welcome-nav .cancel-btn { width: 100%; }
 }
 @media (orientation: landscape) and (max-height: 500px) {
   .sidebar, .mobile-nav { display: none; }
@@ -1129,29 +1323,58 @@ button { cursor: pointer; border: none; background: none; }
 <body>
 
 <!-- ============================================================
-     ★ ENTRANCE — MODÈLE 3 ANIMÉ (Logo seul) ★
+     ★ ENTRANCE — MODÈLE 3 · ICÔNES FLOTTANTES ★
      ============================================================ -->
 <div class="welcome-overlay" id="welcomeOverlay">
 
-  <!-- Réseau décoratif -->
-  <svg class="welcome-network" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <!-- Rayon diagonal -->
+  <div class="wn-beam"></div>
+
+  <!-- Réseau SVG de fond -->
+  <svg class="wn-network" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <g fill="none">
-      <path class="wn-line" d="M20 60 90 140 210 90 300 190"/>
-      <path class="wn-line" d="M980 70 1060 150 1180 100 1260 200"/>
-      <path class="wn-line" d="M1100 560 1190 600 1270 540"/>
+      <path class="ln" pathLength="1" d="M20 60 90 140 210 90 300 190M980 70 1060 150 1180 100 1260 200M1100 560 1190 600 1270 540"/>
     </g>
     <g>
-      <circle class="wn-dot" cx="20"   cy="60"  r="3"/>
-      <circle class="wn-dot" cx="90"   cy="140" r="3"/>
-      <circle class="wn-dot" cx="210"  cy="90"  r="3"/>
-      <circle class="wn-dot" cx="300"  cy="190" r="3"/>
-      <circle class="wn-dot" cx="980"  cy="70"  r="3"/>
-      <circle class="wn-dot" cx="1060" cy="150" r="3"/>
-      <circle class="wn-dot" cx="1180" cy="100" r="3"/>
-      <circle class="wn-dot" cx="1100" cy="560" r="3"/>
-      <circle class="wn-dot" cx="1190" cy="600" r="3"/>
+      <circle class="nd" cx="20"   cy="60"  r="3"/>
+      <circle class="nd" cx="90"   cy="140" r="3"/>
+      <circle class="nd" cx="210"  cy="90"  r="3"/>
+      <circle class="nd" cx="300"  cy="190" r="3"/>
+      <circle class="nd" cx="980"  cy="70"  r="3"/>
+      <circle class="nd" cx="1060" cy="150" r="3"/>
+      <circle class="nd" cx="1180" cy="100" r="3"/>
+      <circle class="nd" cx="1100" cy="560" r="3"/>
+      <circle class="nd" cx="1190" cy="600" r="3"/>
     </g>
   </svg>
+
+  <!-- Particules qui montent -->
+  <div class="wn-p" style="left:645px;width:2px;height:2px;animation-duration:17s;animation-delay:-9s"></div>
+  <div class="wn-p" style="left:60px;width:2px;height:2px;animation-duration:18s;animation-delay:-3s"></div>
+  <div class="wn-p" style="left:820px;width:2px;height:2px;animation-duration:13s;animation-delay:-12s"></div>
+  <div class="wn-p" style="left:136px;width:2px;height:2px;animation-duration:9s;animation-delay:-6s"></div>
+  <div class="wn-p" style="left:429px;width:2px;height:2px;animation-duration:16s;animation-delay:-12s"></div>
+  <div class="wn-p" style="left:813px;width:3px;height:3px;animation-duration:10s;animation-delay:-18s"></div>
+  <div class="wn-p" style="left:406px;width:4px;height:4px;animation-duration:13s;animation-delay:-10s"></div>
+  <div class="wn-p" style="left:178px;width:3px;height:3px;animation-duration:14s;animation-delay:0s"></div>
+  <div class="wn-p" style="left:839px;width:2px;height:2px;animation-duration:11s;animation-delay:-7s"></div>
+  <div class="wn-p" style="left:206px;width:2px;height:2px;animation-duration:9s;animation-delay:-14s"></div>
+  <div class="wn-p" style="left:997px;width:2px;height:2px;animation-duration:17s;animation-delay:-6s"></div>
+  <div class="wn-p" style="left:916px;width:4px;height:4px;animation-duration:12s;animation-delay:-4s"></div>
+  <div class="wn-p" style="left:858px;width:4px;height:4px;animation-duration:15s;animation-delay:-3s"></div>
+  <div class="wn-p" style="left:808px;width:3px;height:3px;animation-duration:12s;animation-delay:0s"></div>
+  <div class="wn-p" style="left:552px;width:4px;height:4px;animation-duration:13s;animation-delay:0s"></div>
+  <div class="wn-p" style="left:431px;width:2px;height:2px;animation-duration:15s;animation-delay:-18s"></div>
+  <div class="wn-p" style="left:205px;width:2px;height:2px;animation-duration:11s;animation-delay:-6s"></div>
+  <div class="wn-p" style="left:904px;width:3px;height:3px;animation-duration:9s;animation-delay:-10s"></div>
+  <div class="wn-p" style="left:606px;width:3px;height:3px;animation-duration:10s;animation-delay:-2s"></div>
+  <div class="wn-p" style="left:184px;width:2px;height:2px;animation-duration:18s;animation-delay:-7s"></div>
+  <div class="wn-p" style="left:31px;width:4px;height:4px;animation-duration:14s;animation-delay:-11s"></div>
+  <div class="wn-p" style="left:928px;width:2px;height:2px;animation-duration:18s;animation-delay:-15s"></div>
+
+  <!-- Étoiles filantes -->
+  <div class="wn-sk" style="left:1050px;top:70px;animation-delay:3s"></div>
+  <div class="wn-sk" style="left:700px;top:30px;animation-delay:7s"></div>
 
   <!-- Bouton langue -->
   <button class="welcome-lang-toggle" id="welcomeLangToggle" onclick="toggleLanguage()" aria-label="Langue">
@@ -1159,35 +1382,227 @@ button { cursor: pointer; border: none; background: none; }
     <span id="welcomeLangLabel">FR</span>
   </button>
 
-  <!-- Scène centrale -->
+  <!-- Lignes connectrices autour du logo -->
+  <svg class="wn-lines" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g>
+      <line x1="170" y1="170" x2="330" y2="300"/><line x1="330" y1="300" x2="310" y2="520"/>
+      <line x1="330" y1="300" x2="130" y2="420"/><line x1="130" y1="420" x2="310" y2="520"/>
+      <line x1="170" y1="170" x2="430" y2="80"/>
+      <line x1="1110" y1="170" x2="950" y2="310"/><line x1="950" y1="310" x2="970" y2="520"/>
+      <line x1="950" y1="310" x2="1150" y2="430"/><line x1="1150" y1="430" x2="970" y2="520"/>
+      <line x1="1110" y1="170" x2="1200" y2="290"/><line x1="1200" y1="290" x2="950" y2="310"/>
+      <line x1="1110" y1="170" x2="850" y2="80"/>
+    </g>
+    <g>
+      <line class="lf" pathLength="100" x1="170" y1="170" x2="330" y2="300" style="animation-delay:-1.8s;animation-duration:4.7s"/>
+      <line class="lf" pathLength="100" x1="330" y1="300" x2="310" y2="520" style="animation-delay:-3.7s;animation-duration:4.4s"/>
+      <line class="lf" pathLength="100" x1="330" y1="300" x2="130" y2="420" style="animation-delay:-2.0s;animation-duration:4.8s"/>
+      <line class="lf" pathLength="100" x1="130" y1="420" x2="310" y2="520" style="animation-delay:-0.7s;animation-duration:4.5s"/>
+      <line class="lf" pathLength="100" x1="170" y1="170" x2="430" y2="80" style="animation-delay:-2.5s;animation-duration:5.4s"/>
+      <line class="lf" pathLength="100" x1="1110" y1="170" x2="950" y2="310" style="animation-delay:-0.4s;animation-duration:3.9s"/>
+      <line class="lf" pathLength="100" x1="950" y1="310" x2="970" y2="520" style="animation-delay:-0.4s;animation-duration:5.4s"/>
+      <line class="lf" pathLength="100" x1="950" y1="310" x2="1150" y2="430" style="animation-delay:-2.8s;animation-duration:3.1s"/>
+      <line class="lf" pathLength="100" x1="1150" y1="430" x2="970" y2="520" style="animation-delay:-3.9s;animation-duration:5.9s"/>
+      <line class="lf" pathLength="100" x1="1110" y1="170" x2="1200" y2="290" style="animation-delay:-2.6s;animation-duration:4.8s"/>
+      <line class="lf" pathLength="100" x1="1200" y1="290" x2="950" y2="310" style="animation-delay:-0.6s;animation-duration:3.0s"/>
+      <line class="lf" pathLength="100" x1="1110" y1="170" x2="850" y2="80" style="animation-delay:-2.1s;animation-duration:3.2s"/>
+    </g>
+  </svg>
+
+  <!-- Icônes flottantes (SVG Lucide style) -->
+  <div class="wn-icons" aria-hidden="true">
+
+    <!-- 1 : livre/cap gauche -->
+    <div class="wn-ic" data-mobile="hide" style="left:10.78%;top:19.17%;width:64px;height:64px;--dx:470px;--dy:26px;--o:0.95;--k:1;--c:#8fb8ff;--sd:0s;animation-delay:0.90s">
+      <div class="wn-ic-inner a" style="animation-delay:-3s">
+        <div class="wn-ic-tile">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10 12 5 2 10l10 5 10-5z"/>
+            <path d="M6 12v5c3 2 9 2 12 0v-5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 : livre ouvert (grand) -->
+    <div class="wn-ic" style="left:22.34%;top:35.56%;width:88px;height:88px;--dx:310px;--dy:-104px;--o:1;--k:1.4;--c:#63a4ff;--sd:-0.7s;animation-delay:1.03s">
+      <div class="wn-ic-inner b" style="animation-delay:0s">
+        <div class="wn-ic-tile">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/>
+            <path d="M8 7h8M8 11h6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 : atome (petit, flou) -->
+    <div class="wn-ic" data-mobile="hide" style="left:8.36%;top:55.14%;width:46px;height:46px;--dx:510px;--dy:-224px;--o:0.5;--k:0.6;--c:#7ad7f0;--sd:-1.4s;animation-delay:1.16s">
+      <div class="wn-ic-inner c" style="animation-delay:-5s">
+        <div class="wn-ic-tile" style="filter:blur(1.4px)">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="1.5"/>
+            <ellipse cx="12" cy="12" rx="10" ry="4"/>
+            <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/>
+            <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 : calendrier -->
+    <div class="wn-ic" style="left:21.72%;top:67.78%;width:64px;height:64px;--dx:330px;--dy:-324px;--o:0.95;--k:1;--c:#b79bff;--sd:-2.1s;animation-delay:1.29s">
+      <div class="wn-ic-inner a" style="animation-delay:-3s">
+        <div class="wn-ic-tile">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 18h2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 : crayon -->
+    <div class="wn-ic" data-mobile="hide" style="left:31.80%;top:7.92%;width:46px;height:46px;--dx:210px;--dy:116px;--o:0.5;--k:0.6;--c:#ff9db8;--sd:-2.8s;animation-delay:1.42s">
+      <div class="wn-ic-inner b" style="animation-delay:-3s">
+        <div class="wn-ic-tile" style="filter:blur(1.4px)">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 3l4 4L8 20l-5 1 1-5z"/>
+            <path d="M14 6l4 4"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 : ampoule -->
+    <div class="wn-ic" data-mobile="hide" style="left:84.22%;top:19.17%;width:64px;height:64px;--dx:-470px;--dy:26px;--o:0.95;--k:1;--c:#ffd98a;--sd:-3.5s;animation-delay:1.55s">
+      <div class="wn-ic-inner c" style="animation-delay:-4s">
+        <div class="wn-ic-tile">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18h6M10 21h4"/>
+            <path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 : graphique (grand) -->
+    <div class="wn-ic" style="left:70.78%;top:36.94%;width:88px;height:88px;--dx:-310px;--dy:-114px;--o:1;--k:1.4;--c:#63a4ff;--sd:-4.2s;animation-delay:1.68s">
+      <div class="wn-ic-inner a" style="animation-delay:0s">
+        <div class="wn-ic-tile">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"/>
+            <path d="M8 17v-5M13 17V8M18 17v-8"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 : trophée -->
+    <div class="wn-ic" data-mobile="hide" style="left:88.05%;top:56.53%;width:46px;height:46px;--dx:-510px;--dy:-234px;--o:0.5;--k:0.6;--c:#ffd98a;--sd:-4.9s;animation-delay:1.81s">
+      <div class="wn-ic-inner b" style="animation-delay:-1s">
+        <div class="wn-ic-tile" style="filter:blur(1.4px)">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/>
+            <path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 : cible -->
+    <div class="wn-ic" style="left:73.28%;top:67.78%;width:64px;height:64px;--dx:-330px;--dy:-324px;--o:0.95;--k:1;--c:#ff9db8;--sd:-5.6s;animation-delay:1.94s">
+      <div class="wn-ic-inner c" style="animation-delay:-4s">
+        <div class="wn-ic-tile">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <circle cx="12" cy="12" r="5"/>
+            <circle cx="12" cy="12" r="1.2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 : globe -->
+    <div class="wn-ic" data-mobile="hide" style="left:91.95%;top:37.08%;width:46px;height:46px;--dx:-560px;--dy:-94px;--o:0.5;--k:0.6;--c:#7ad7f0;--sd:-6.3s;animation-delay:2.07s">
+      <div class="wn-ic-inner a" style="animation-delay:-8s">
+        <div class="wn-ic-tile" style="filter:blur(1.4px)">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 : fiole chimie -->
+    <div class="wn-ic" data-mobile="hide" style="left:64.61%;top:7.92%;width:46px;height:46px;--dx:-210px;--dy:116px;--o:0.5;--k:0.6;--c:#7ad7f0;--sd:-7.0s;animation-delay:2.20s">
+      <div class="wn-ic-inner b" style="animation-delay:-4s">
+        <div class="wn-ic-tile" style="filter:blur(1.4px)">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/>
+            <path d="M8 15h8"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteneur central -->
   <div class="welcome-box">
 
     <!-- Étape 1 : Logo + Commencer -->
     <div class="welcome-step active" data-step="1">
-      <div class="welcome-logo-block">
-        <div class="welcome-glow"></div>
-        <svg class="welcome-logo-svg" viewBox="0 0 72 64" aria-hidden="true">
+      <div class="wn-logo-wrap">
+        <div class="wn-halo"></div>
+        <div class="wn-rip"></div>
+        <div class="wn-rip"></div>
+
+        <svg class="wn-logo-svg" viewBox="0 0 72 64" aria-hidden="true">
           <defs>
-            <linearGradient id="welcomeLogoGrad" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stop-color="#5ab0ff"/>
               <stop offset="1" stop-color="#7a5cff"/>
             </linearGradient>
           </defs>
-          <path class="body" d="M8 14h18v28a8 8 0 0 0 16 0V14h18v28a26 26 0 0 1-52 0z" fill="url(#welcomeLogoGrad)"/>
+          <path d="M8 14h18v28a8 8 0 0 0 16 0V14h18v28a26 26 0 0 1-52 0z" fill="url(#g)"/>
           <g class="cap">
             <path d="M34 14 52 6l18 8-18 8z" fill="#1b2350"/>
-            <path d="M66 15v14" stroke="#1b2350" stroke-width="3"/>
+            <g class="tassel">
+              <path d="M66 15v14" stroke="#1b2350" stroke-width="3"/>
+              <circle cx="66" cy="30" r="2.2" fill="#1b2350"/>
+            </g>
           </g>
         </svg>
-        <div class="welcome-brand-name" aria-label="UNIVA">
+
+        <div class="wn-brand" aria-label="UNIVA">
           <span>U</span><span>N</span><span>I</span><span>V</span><span>A</span>
         </div>
-        <div class="logo-sub" id="welcomeLogoSub">Intelligence · Organisation · Maîtrise</div>
+
+        <div class="wn-sep">
+          <i></i><b></b><i></i>
+        </div>
+        <div class="logo-sub" id="welcomeLogoSub" style="font-size:12px;color:rgba(232,235,255,.55);margin-top:12px;opacity:0;animation:wn-rise .8s cubic-bezier(.2,.8,.2,1) 2.2s both">
+          Intelligence · Organisation · Maîtrise
+        </div>
       </div>
-      <button class="primary-btn" id="startBtn" type="button">
-        Commencer
-        <span class="welcome-btn-shine"></span>
-      </button>
+
+      <div class="wn-btn-wrap">
+        <div class="wn-btn-outer">
+          <div class="wn-btn-ripple"></div>
+          <button class="wn-btn" id="startBtn" type="button">
+            Commencer
+            <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0f2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+            <span class="shine"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="wn-dots" id="welcomeDots">
+        <span class="d active"></span><span class="d"></span><span class="d"></span>
+      </div>
     </div>
 
     <!-- Étape 2 : Prénom -->
@@ -1199,9 +1614,10 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <div class="welcome-nav">
         <button class="cancel-btn" id="backToStep1" onclick="goToStep(1)">← Retour</button>
-        <button class="primary-btn" id="toStep3Btn" type="button">
+        <button class="wn-btn" id="toStep3Btn" type="button">
           Continuer
-          <span class="welcome-btn-shine"></span>
+          <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0f2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span class="shine"></span>
         </button>
       </div>
     </div>
@@ -1222,18 +1638,18 @@ button { cursor: pointer; border: none; background: none; }
       </div>
       <div class="welcome-nav">
         <button class="cancel-btn" id="backToStep2" onclick="goToStep(2)">← Retour</button>
-        <button class="primary-btn" id="enterBtn" type="button">
+        <button class="wn-btn" id="enterBtn" type="button">
           Entrer dans l'espace
-          <span class="welcome-btn-shine"></span>
+          <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0f2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span class="shine"></span>
         </button>
       </div>
     </div>
-
-    <!-- Points -->
-    <div class="welcome-dots" id="welcomeDots">
-      <span class="active"></span><span></span><span></span>
-    </div>
   </div>
+
+  <!-- Grille au sol + horizon -->
+  <div class="wn-horizon"></div>
+  <div class="wn-fw"><div class="wn-fg"></div></div>
 </div>
 
 <!-- ============================================================
@@ -1750,7 +2166,7 @@ function applyTranslations() {
   document.getElementById('welcomeGenderLabel').textContent = t('welcome_gender');
   document.getElementById('welcomeFemaleLabel').textContent = t('gender_female');
   document.getElementById('welcomeMaleLabel').textContent = t('gender_male');
-  document.getElementById('enterBtn').textContent = t('welcome_enter');
+  document.getElementById('enterBtn').innerHTML = t('welcome_enter') + ' <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0f2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="shine"></span>';
   document.getElementById('navLabelSpace').textContent = t('nav_space');
   document.getElementById('navDashboard').textContent = t('nav_dashboard');
   document.getElementById('navMoyenne').textContent = t('nav_moyenne');
@@ -1824,9 +2240,9 @@ function updateWelcomeTranslations() {
   document.getElementById('welcomeGenderLabel').textContent = t('welcome_gender');
   document.getElementById('welcomeFemaleLabel').textContent = t('gender_female');
   document.getElementById('welcomeMaleLabel').textContent = t('gender_male');
-  document.getElementById('enterBtn').textContent = t('welcome_enter');
-  document.getElementById('startBtn').textContent = t('welcome_start');
-  document.getElementById('toStep3Btn').textContent = t('welcome_continue');
+  document.getElementById('enterBtn').innerHTML = t('welcome_enter') + ' <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0f2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="shine"></span>';
+  document.getElementById('startBtn').innerHTML = t('welcome_start') + ' <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0f2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="shine"></span>';
+  document.getElementById('toStep3Btn').innerHTML = t('welcome_continue') + ' <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0f2c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="shine"></span>';
   document.getElementById('backToStep1').textContent = '← ' + t('welcome_back');
   document.getElementById('backToStep2').textContent = '← ' + t('welcome_back');
   document.getElementById('nameInput').placeholder = t('welcome_name_placeholder');
@@ -2014,7 +2430,7 @@ function goToStep(n) {
   document.querySelectorAll('.welcome-step').forEach(el => {
     el.classList.toggle('active', parseInt(el.dataset.step, 10) === n);
   });
-  document.querySelectorAll('#welcomeDots span').forEach((dot, i) => {
+  document.querySelectorAll('#welcomeDots .d').forEach((dot, i) => {
     dot.classList.toggle('active', i === n - 1);
   });
   if (n === 2) {
@@ -2033,7 +2449,7 @@ function initWelcome() {
   function validateName() {
     const name = input.value.trim();
     if (!name) {
-      input.style.borderColor = 'var(--accent-primary)';
+      input.style.borderColor = '#8fa8ff';
       input.focus();
       showToast(t('toast_enter_name'));
       return false;
@@ -3102,7 +3518,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-console.log('✨ UNIVA · v13 · Entrance Modèle 3 animé');
+console.log('✨ UNIVA · v14 · Entrance Modèle 3 · Icônes flottantes');
 </script>
 </body>
 </html>
