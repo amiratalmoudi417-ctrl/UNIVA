@@ -992,8 +992,18 @@ button { cursor: pointer; border: none; background: none; }
   .nav-icon { width: 20px; font-size: 15px; }
   .page { padding: 10px 14px 12px; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .charts-row { grid-template-columns: 1fr; gap: 10px; }
   .stats-bottom { grid-template-columns: repeat(2, 1fr); }
+
+  /* ★ FIX SCROLL MOBILE : les charts ne doivent PAS s'écraser */
+  .charts-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    flex: none;          /* ← libère la hauteur */
+    min-height: auto;    /* ← enlève la contrainte de compression */
+  }
+  .chart-card {
+    min-height: 220px;   /* ← garde une hauteur lisible */
+  }
 }
 
 @media (max-width: 750px) {
@@ -1116,7 +1126,7 @@ button { cursor: pointer; border: none; background: none; }
     </div>
 
     <div class="welcome-step" data-step="2">
-      <div class="welcome-step-icon">👋</div>
+      <div class="welcome-step-icon"></div>
       <div class="welcome-step-title" id="welcomeNameLabel">Quel est ton prénom ?</div>
       <div class="welcome-step-sub" id="welcomeNameSub">On personnalise ton espace.</div>
       <div class="form-group">
@@ -1129,7 +1139,7 @@ button { cursor: pointer; border: none; background: none; }
     </div>
 
     <div class="welcome-step" data-step="3">
-      <div class="welcome-step-icon">🎓</div>
+      <div class="welcome-step-icon"></div>
       <div class="welcome-step-title" id="welcomeGenderLabel">Je suis :</div>
       <div class="welcome-step-sub" id="welcomeGenderSub">Choisis ce qui te correspond.</div>
       <div class="gender-select">
