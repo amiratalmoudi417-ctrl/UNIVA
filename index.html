@@ -1538,10 +1538,10 @@ exams:[
 {id:'e1',name:'Management S1',subjectId:'s1_1',date:addDays(14),progress:40},
 {id:'e2',name:'Comptabilité S1',subjectId:'s1_2',date:addDays(17),progress:30},
 {id:'e3',name:'Marketing S1',subjectId:'s1_3',date:addDays(21),progress:25}],
-cards:[],notes:{},log:[],diff:{},cfg:{focus:25,brk:5,hours:3,week:600},quick:''});
+cards:[],notes:{},log:[],diff:{},cfg:{focus:25,brk:5,hours:3,week:600,sessions:[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}]},quick:''});
 
 let data;const dkey=()=>'univa_data_v9_'+(user||'default').toLowerCase().trim().replace(/\s+/g,'_');
-function load(){let d;try{d=JSON.parse(LS[dkey()])}catch{}const f=def();data=Object.assign(f,d||{});data.cfg=Object.assign(f.cfg,data.cfg);data.subjects.forEach(s=>{s.credits??=3;s.coef??=s.credits;s.semester??=1;['oral','ds','exam'].forEach(k=>s[k]??=null)});if(!P.run)P.left=data.cfg.focus*60}
+function load(){let d;try{d=JSON.parse(LS[dkey()])}catch{}const f=def();data=Object.assign(f,d||{});data.cfg=Object.assign(f.cfg,data.cfg);data.subjects.forEach(s=>{s.credits??=3;s.coef??=s.credits;s.semester??=1;['oral','ds','exam'].forEach(k=>s[k]??=null)});data.cfg.sessions??=[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}];syncRows();if(!P.run)P.left=data.cfg.focus*60}
 const save=()=>{try{LS[dkey()]=JSON.stringify(data)}catch{}};
 const sub=id=>data.subjects.find(s=>s.id===id),sname=id=>(sub(id)||{name:'—'}).name;
 const fill=v=>v!==null&&v!==undefined&&v!==''&&!isNaN(parseFloat(v)),cmpl=s=>fill(s.oral)&&fill(s.ds)&&fill(s.exam);
@@ -1615,20 +1615,21 @@ const DAYS=()=>lang==='fr'?['lundi','mardi','mercredi','jeudi','vendredi','samed
 
 R.moyenne=()=>{const st=stats(),tb=n=>{const ss=data.subjects.filter(s=>s.semester===n),x=n===1?st.s1:st.s2;
 return`<div class="card" style="margin-bottom:12px"><div class="ct" style="margin-bottom:10px">📘 ${L('Semestre','Semester')} ${n} <span class="chip high" style="margin-left:6px">${x.vc}/${x.tc} ${L('crédits','credits')}</span></div><div class="tbl">
-${[L('Matière','Subject'),'Oral 10%','DS 20%',L('Examen 70%','Exam 70%'),L('Moy','Avg'),'Coef',''].map(h=>`<div class="h">${h}</div>`).join('')}
+${[L('Matière','Subject'),'Oral 10%','DS 20%',L('Examen 70%','Exam 70%'),L('Moy','Avg'),'Coef',''].map(h=>`<div class="h">${h}</div>`)}.join('')}
 ${ss.map(s=>{const a=avg(s);return`<div class="n" data-a="sd-open" data-id="${s.id}" style="cursor:pointer" title="${L('Voir / modifier','View / edit')}"><i style="background:var(--c-${s.color}-text)"></i><span>${esc(s.name)}</span></div>`+['oral','ds','exam'].map(k=>`<input type="number" min="0" max="20" step=".25" placeholder="—" value="${fill(s[k])?s[k]:''}" data-g="${k}" data-id="${s.id}">`).join('')+`<div class="av2 ${a===null?'':a>=10?'g':'b'}">${a!==null?a.toFixed(2):'—'}</div><div class="cf">${s.coef}</div><button class="x" data-a="del" data-k="subject" data-id="${s.id}">✕</button>`}).join('')||`<div style="grid-column:1/-1;text-align:center;color:var(--mu);font-size:13px;padding:12px">${L('Aucune matière.','No subjects.')}</div>`}</div></div>`};
 return`<div class="card" style="margin-bottom:14px"><div class="ch"><div><div class="ct">${L('Moyenne & Notes','Average & Grades')}</div><div class="cs">${L('Oral 10% · DS 20% · Examen 70% · Crédits validés si moyenne ≥ 10','Oral 10% · Test 20% · Exam 70% · Credits validated if average ≥ 10')}</div></div><button class="btn" data-a="add" data-k="subject">${L('+ Matière','+ Subject')}</button></div>
 <div class="ms" style="margin:0"><div class="card" style="background:var(--b1)"><div class="kl">${L('Générale','Overall')}</div><div class="kn">${st.gpa!==null?st.gpa.toFixed(2):'—'}</div><div class="ks"><b>${st.vc}</b> / ${st.tc} ${L('crédits','credits')}</div></div>
 <div class="card"><div class="kl">S1</div><div class="kn" style="font-size:24px">${st.s1.avg!==null?st.s1.avg.toFixed(2):'—'}</div></div>
 <div class="card"><div class="kl">S2</div><div class="kn" style="font-size:24px">${st.s2.avg!==null?st.s2.avg.toFixed(2):'—'}</div></div></div></div>${tb(1)}${tb(2)}`};
 
-const ROWS=[{s:'08:15',e:'09:45'},{s:'09:50',e:'11:20'},{s:'11:25',e:'12:55'},{p:1,s:'12:55',e:'13:30'},{s:'13:30',e:'15:00'},{s:'15:05',e:'16:35'},{s:'16:40',e:'18:10'}];
+let ROWS=[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}];
+function syncRows(){if(data&&data.cfg&&Array.isArray(data.cfg.sessions)&&data.cfg.sessions.length===7){ROWS=data.cfg.sessions.map(x=>({...x}))}}
 R.timetable=()=>{const ds=DAYS(),td=ds[(new Date().getDay()+6)%7];let n=0,h=`<div class="tt"><i></i>`+ds.map(d=>`<div class="dh${d===td?' today':''}">${d}</div>`).join('');
 ROWS.forEach((r,i)=>h+=`<div class="th${r.p?' p':''}" style="grid-area:${i+2}/1">${r.p?'PAUSE':L('Séance ','Session ')+(++n)}<small>${r.s}–${r.e}</small></div>`);
 ds.forEach((d,di)=>{const occ=Array(7).fill(0);data.classes.filter(c=>c.day===d).forEach(c=>{const st=ROWS.findIndex(r=>!r.p&&r.s===c.time);if(st<0)return;const a=mins(c.time),b=a+(c.duration||90);let sp=1;ROWS.forEach((r,i)=>{if(i>=st&&mins(r.s)<b&&mins(r.e)>a)sp=i-st+1});for(let i=st;i<st+sp;i++)occ[i]=1;
 h+=`<div class="cell ${c.color}" style="grid-area:${st+2}/${di+2}/span ${sp}" data-a="edit" data-k="class" data-id="${c.id}"><b>${esc(c.name)}</b><small>${esc(sname(c.subjectId))}</small></div>`});
 ROWS.forEach((r,i)=>{if(!occ[i])h+=r.p?`<div class="cell pz" style="grid-area:${i+2}/${di+2}">☕</div>`:`<div class="cell add" style="grid-area:${i+2}/${di+2}" data-a="add" data-k="class" data-day="${d}" data-time="${r.s}">+</div>`})});
-return card('','0',`<div class="ch"><div><div class="ct">${L('Emploi du temps','Timetable')}</div><div class="cs">${L('Sessions · 8h15 → 18h10 · Clique sur + pour ajouter','Sessions · 8:15 → 18:10 · Click + to add')}</div></div><button class="btn" data-a="add" data-k="class">${L('+ Cours','+ Class')}</button></div>${h}</div>`)};
+return card('','0',`<div class="ch"><div><div class="ct">${L('Emploi du temps','Timetable')}</div><div class="cs">${L('Sessions · 8h15 → 18h10 · Clique sur + pour ajouter','Sessions · 8:15 → 18:10 · Click + to add')}</div></div><div class="row" style="align-items:center;gap:8px"><button class="btn g" data-a="edit-sessions" title="${L('Modifier les horaires','Edit hours')}">⚙ ${L('Horaires','Hours')}</button><button class="btn" data-a="add" data-k="class">${L('+ Cours','+ Class')}</button></div></div>${h}</div>`)}
 
 R.homework=()=>{const l=tasksList();return card('','0',`<div class="ch"><div><div class="ct">${L('Tâches à faire','Tasks')}</div><div class="cs">${L('Priorité basée sur la compréhension','Priority based on comprehension')}</div></div><button class="btn" data-a="add" data-k="task">${L('+ Tâche','+ Task')}</button></div><div style="margin-bottom:10px">${filters()}</div>${l.length?l.map(x=>taskRow(x,1)).join(''):empty('📋',L('Aucune tâche','No tasks'),L('Ajoute ta première tâche.','Add your first task.'),addBtn('task',L('+ Tâche','+ Task')))}`)};
 
@@ -1747,6 +1748,31 @@ else{t=id?L('Modifier la matière','Edit subject'):L('Nouvelle matière','New su
 mfn=()=>{const n=$('#m1').value.trim();if(!n)return 0;const v={name:n,credits:Math.max(1,parseInt($('#m2').value)||3),coef:Math.max(.5,parseFloat($('#m3').value)||2.5),semester:+$('#m4').value,color:$('#m5').value};id?Object.assign(o,v):data.subjects.push({id:uid(),oral:null,ds:null,exam:null,...v})}}
 modal.innerHTML=`<h2>${t}</h2>${b}<div class="ma"><button class="btn g" data-a="mx">${L('Annuler','Cancel')}</button><button class="btn" data-a="mok">${L('Enregistrer','Save')}</button></div>`;ov.classList.add('on');(modal.querySelector('input')||{focus(){}}).focus()}
 const closeModal=()=>{ov.classList.remove('on');mfn=null};
+/* ============ ÉDITEUR D'HORAIRES DES SÉANCES ============ */
+const DEFAULT_SESSIONS=[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}];
+function openSessionsEditor(){
+  const ses=(data.cfg.sessions||DEFAULT_SESSIONS).slice();
+  let html=`<p style="font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.5">${L('Modifie les horaires de chaque séance (format 24h). Les cours existants ne seront pas déplacés.','Edit each session time (24h format). Existing classes will not be moved.')}</p>`;
+  ses.forEach((row,i)=>{
+    const isPause=!!row.p;
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px">
+      <div class="fg" style="margin:0"><label>${isPause?'☕ PAUSE':L('Séance','Session')+' '+(i+1)} — ${L('Début','Start')}</label>
+        <input class="in2" type="time" data-ss="${i}" data-sk="s" value="${row.s}"></div>
+      <div class="fg" style="margin:0"><label>${L('Fin','End')}</label>
+        <input class="in2" type="time" data-ss="${i}" data-sk="e" value="${row.e}"></div>
+      <button class="btn g sm" data-a="ss-reset" data-i="${i}" title="${L('Défaut','Default')}" style="margin-bottom:1px">↺</button>
+    </div>`;
+  });
+  modal.innerHTML=`<h2>${L('Modifier les horaires','Edit session times')}</h2>${html}
+    <div class="ma" style="justify-content:space-between">
+      <button class="btn g" data-a="ss-reset-all">${L('Tout réinitialiser','Reset all')}</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn g" data-a="mx">${L('Annuler','Cancel')}</button>
+        <button class="btn" data-a="ss-save">${L('Enregistrer','Save')}</button>
+      </div>
+    </div>`;
+  ov.classList.add('on');
+}
 /* ============ MODAL DÉTAIL MATIÈRE ============ */
 function openSubjectDetail(id){
   const s=sub(id);if(!s)return;
@@ -1963,6 +1989,32 @@ flt:d=>{tf=d.f;render()},cal:d=>{calSel=d.d;render()},cm:d=>{calM+=+d.n;if(calM<
 theme:()=>{theme=theme==='light'?'dark':'light';document.documentElement.dataset.theme=theme;try{LS.univa_theme=theme}catch{}shell()},
 lang:()=>{lang=lang==='fr'?'en':'fr';try{LS.univa_lang=lang}catch{}document.documentElement.lang=lang;shell();render();updateWelcomeText();syncDockLabels()},
 install:handleInstallClick,itab:d=>switchInstallTab(d.tab),iclose:()=>closeInstallModal(),
+'edit-sessions':()=>openSessionsEditor(),
+'ss-save':()=>{
+  const ses=data.cfg.sessions.map(x=>({...x}));
+  document.querySelectorAll('[data-ss]').forEach(inp=>{
+    const i=+inp.dataset.ss,k=inp.dataset.sk,v=(inp.value||'').trim();
+    if(/^\d{2}:\d{2}$/.test(v))ses[i][k]=v;
+  });
+  for(let i=0;i<ses.length;i++){
+    if(mins(ses[i].s)>=mins(ses[i].e)){toast(L('Horaire invalide : séance '+(i+1),'Invalid time: session '+(i+1)));return}
+    if(i>0&&mins(ses[i].s)<mins(ses[i-1].e)){toast(L('Chevauchement : séance '+(i+1),'Overlap at session '+(i+1)));return}
+  }
+  data.cfg.sessions=ses;syncRows();save();closeModal();render();
+  toast(L('Horaires mis à jour ✓','Hours updated ✓'));
+},
+'ss-reset':d=>{
+  const i=+d.i,def=DEFAULT_SESSIONS[i];
+  const sEl=document.querySelector(`[data-ss="${i}"][data-sk="s"]`),eEl=document.querySelector(`[data-ss="${i}"][data-sk="e"]`);
+  if(sEl)sEl.value=def.s;if(eEl)eEl.value=def.e;
+},
+'ss-reset-all':()=>{
+  DEFAULT_SESSIONS.forEach((row,i)=>{
+    const sEl=document.querySelector(`[data-ss="${i}"][data-sk="s"]`),eEl=document.querySelector(`[data-ss="${i}"][data-sk="e"]`);
+    if(sEl)sEl.value=row.s;if(eEl)eEl.value=row.e;
+  });
+  toast(L('Valeurs par défaut restaurées','Defaults restored'));
+},
 fr:()=>{frev=data.cards.filter(c=>c.sid===fsub&&c.due<=iso()).map(c=>c.id);fflip=false;render()},
 ff:()=>{fflip=true;render()},fs:()=>{frev=null;render()},
 fo:()=>fans(1),fk:()=>fans(0),fdel:d=>{data.cards=data.cards.filter(c=>c.id!==d.id);save();render()},
