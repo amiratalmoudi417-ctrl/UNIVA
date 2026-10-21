@@ -1120,6 +1120,16 @@ body[data-theme="light"] .nav.on{
   body .wn-btn-wrap{margin-top:0 !important}
   body .wn-dots{margin-top:20px !important}
 }
+
+/* ============ RÉGIME MODAL ============ */
+.regime-group-title{font-size:11px;font-weight:700;color:var(--mu);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.regime-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--s1);margin-bottom:6px;cursor:pointer;transition:.2s}
+.regime-option:hover{border-color:var(--a1)}
+.regime-option:has(input:checked){border-color:var(--a1)!important;background:var(--b1)!important;box-shadow:0 0 14px rgba(96,165,250,.35),inset 0 0 10px rgba(96,165,250,.1)}
+.regime-option input{width:16px;height:16px;accent-color:var(--a1);flex-shrink:0;margin:0}
+.regime-option .ro-body{flex:1;min-width:0}
+.regime-option .ro-desc{font-size:13.5px;font-weight:600;color:var(--tx)}
+.regime-option .ro-sub{font-size:11px;color:var(--mu);margin-top:1px}
 </style>
 </head>
 <body>
@@ -1507,6 +1517,51 @@ const QUOTES=[
 /* ================= LOGO UNIVA ================= */
 const LOGO_SVG=`<svg viewBox="0 0 72 64" aria-hidden="true"><path d="M8 14h18v28a8 8 0 0 0 16 0V14h18v28a26 26 0 0 1-52 0z" fill="url(#lgUNIVA)"/><path d="M34 14 52 6l18 8-18 8z" fill="#1b2350"/><path d="M66 15v14" stroke="#1b2350" stroke-width="3"/><circle cx="66" cy="30" r="2.2" fill="#1b2350"/></svg>`;
 
+/* ================= RÉGIMES DE CALCUL ================= */
+const REGIMES = {
+  core: {
+    label: 'Core',
+    formulas: [
+      { id: 'core_mixte', label: 'Mixte (core)', weights: { oral:.10, ds:.20, exam:.70 }, desc: 'TP×10% + DS×20% + Examen×70%' }
+    ]
+  },
+  prepa: {
+    label: 'Prépa',
+    formulas: [
+      { id: 'prepa_cc',    label: 'Contrôle continu',     weights: { oral:.20, ds:.40, exam:.40 }, desc: 'TP×20% + DS×40% + Examen×40%' },
+      { id: 'prepa_30_70', label: 'TP + DS',              weights: { oral:.30, ds:.70 },           desc: 'TP×30% + DS×70%' },
+      { id: 'prepa_25',    label: 'Moyenne pondérée ×2',  weights: { oral:.25, ds:.25, exam:.50 }, desc: '(TP + DS + Examen×2) / 4' },
+      { id: 'prepa_5050',  label: 'TP + DS (égal)',       weights: { oral:.50, ds:.50 },           desc: '(TP + DS) / 2' }
+    ]
+  },
+  autre: {
+    label: 'Autre',
+    formulas: [
+      { id: 'autre_35_65',    label: 'TP 35 / DS 65',             weights: { oral:.35, ds:.65 },           desc: 'TP×35% + DS×65%' },
+      { id: 'autre_15_25_60', label: 'TP 15 / DS 25 / Examen 60', weights: { oral:.15, ds:.25, exam:.60 }, desc: 'TP×15% + DS×25% + Examen×60%' },
+      { id: 'autre_15_35_50', label: 'TP 15 / DS 35 / Examen 50', weights: { oral:.15, ds:.35, exam:.50 }, desc: 'TP×15% + DS×35% + Examen×50%' },
+      { id: 'autre_35_25_40', label: 'TP 35 / DS 25 / Examen 40', weights: { oral:.35, ds:.25, exam:.40 }, desc: 'TP×35% + DS×25% + Examen×40%' },
+      { id: 'autre_10_10_80', label: 'TP 10 / DS 10 / Examen 80', weights: { oral:.10, ds:.10, exam:.80 }, desc: 'TP×10% + DS×10% + Examen×80%' }
+    ]
+  }
+};
+const DEFAULT_REGIME = { group: 'core', formula: 'core_mixte' };
+
+function getFormula(){
+  const r = (data && data.cfg && data.cfg.regime) || DEFAULT_REGIME;
+  const g = REGIMES[r.group] || REGIMES.core;
+  return g.formulas.find(f => f.id === r.formula) || g.formulas[0];
+}
+function formulaCols(){
+  const f = getFormula();
+  return ['oral','ds','exam'].filter(k => (f.weights[k] || 0) > 0);
+}
+function gradeLabel(k, w){
+  const pct = Math.round(w * 100);
+  const name = k === 'oral' ? 'TP' : k === 'ds' ? 'DS' : (lang === 'fr' ? 'Examen' : 'Exam');
+  return `${name} ${pct}%`;
+}
+
 /* ================= DATA ================= */
 const S=(id,name,color,credits,coef,semester)=>({id,name,color,credits,coef,semester,oral:null,ds:null,exam:null});
 const def=()=>({
@@ -1538,14 +1593,33 @@ exams:[
 {id:'e1',name:'Management S1',subjectId:'s1_1',date:addDays(14),progress:40},
 {id:'e2',name:'Comptabilité S1',subjectId:'s1_2',date:addDays(17),progress:30},
 {id:'e3',name:'Marketing S1',subjectId:'s1_3',date:addDays(21),progress:25}],
-cards:[],notes:{},log:[],diff:{},cfg:{focus:25,brk:5,hours:3,week:600,sessions:[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}]},quick:''});
+cards:[],notes:{},log:[],diff:{},cfg:{focus:25,brk:5,hours:3,week:600,regime:{...DEFAULT_REGIME},sessions:[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}]},quick:''});
 
 let data;const dkey=()=>'univa_data_v9_'+(user||'default').toLowerCase().trim().replace(/\s+/g,'_');
-function load(){let d;try{d=JSON.parse(LS[dkey()])}catch{}const f=def();data=Object.assign(f,d||{});data.cfg=Object.assign(f.cfg,data.cfg);data.subjects.forEach(s=>{s.credits??=3;s.coef??=s.credits;s.semester??=1;['oral','ds','exam'].forEach(k=>s[k]??=null)});data.cfg.sessions??=[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}];syncRows();if(!P.run)P.left=data.cfg.focus*60}
+function load(){let d;try{d=JSON.parse(LS[dkey()])}catch{}const f=def();data=Object.assign(f,d||{});data.cfg=Object.assign(f.cfg,data.cfg);data.cfg.regime = data.cfg.regime || {...DEFAULT_REGIME};data.subjects.forEach(s=>{s.credits??=3;s.coef??=s.credits;s.semester??=1;['oral','ds','exam'].forEach(k=>s[k]??=null)});data.cfg.sessions??=[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}];syncRows();if(!P.run)P.left=data.cfg.focus*60}
 const save=()=>{try{LS[dkey()]=JSON.stringify(data)}catch{}};
 const sub=id=>data.subjects.find(s=>s.id===id),sname=id=>(sub(id)||{name:'—'}).name;
-const fill=v=>v!==null&&v!==undefined&&v!==''&&!isNaN(parseFloat(v)),cmpl=s=>fill(s.oral)&&fill(s.ds)&&fill(s.exam);
-const avg=s=>cmpl(s)?s.oral*.1+s.ds*.2+s.exam*.7:null,valid=s=>(avg(s)??-1)>=10;
+const fill = v => v!==null && v!==undefined && v!=='' && !isNaN(parseFloat(v));
+
+const cmpl = s => {
+  const f = getFormula();
+  for (const k of ['oral','ds','exam']){
+    if ((f.weights[k]||0) > 0 && !fill(s[k])) return false;
+  }
+  return true;
+};
+
+const avg = s => {
+  if (!cmpl(s)) return null;
+  const f = getFormula();
+  let sum = 0;
+  for (const k of ['oral','ds','exam']){
+    if ((f.weights[k]||0) > 0) sum += s[k] * f.weights[k];
+  }
+  return sum;
+};
+
+const valid = s => (avg(s) ?? -1) >= 10;
 const pr=c=>c<=4?'high':c<=7?'medium':'low',prl=p=>({high:L('Urgent','Urgent'),medium:L('Important','Important'),low:L('Normal','Normal')})[p];
 const minsOn=d=>data.log.filter(l=>l.d===d).reduce((a,l)=>a+l.m,0),minsFor=id=>data.log.filter(l=>l.sid===id).reduce((a,l)=>a+l.m,0);
 const streak=()=>{let n=0,i=minsOn(iso())?0:1;while(minsOn(addDays(-i))){n++;i++}return n};
@@ -1554,9 +1628,25 @@ function stats(){
   const a=sem(1),b=sem(2),c=a.c+b.c;
   return{gpa:c?(a.w+b.w)/c:null,vc:a.vc+b.vc,tc:a.tc+b.tc,s1:a,s2:b}
 }
-function risk(s){if(!s||!fill(s.oral)||!fill(s.ds)||fill(s.exam))return null;const n=(10-.1*s.oral-.2*s.ds)/.7,x=n.toFixed(1);
-if(n<=0)return{c:'ok',n:0,t:L('✅ Déjà validée','✅ Already validated')};if(n>20)return{c:'bad',n,t:L('🚨 Rattrapage nécessaire','🚨 Resit needed')};
-return n>=14?{c:'bad',n,t:L(`🚨 ${x}/20 requis`,`🚨 Need ${x}/20`)}:n>=10?{c:'warn',n,t:L(`⚠ ${x}/20 requis`,`⚠ Need ${x}/20`)}:{c:'ok',n,t:L(`✓ ${x}/20 suffit`,`✓ ${x}/20 is enough`)}};
+function risk(s){
+  if(!s) return null;
+  const f = getFormula();
+  if(!f.weights.exam) return null;
+  if(!fill(s.oral) || !fill(s.ds)) return null;
+  if(fill(s.exam)) return null;
+
+  const known = s.oral * (f.weights.oral||0) + s.ds * (f.weights.ds||0);
+  const n = (10 - known) / f.weights.exam;
+  const x = n.toFixed(1);
+
+  if(n <= 0)  return {c:'ok',  n:0, t:L('✅ Déjà validée','✅ Already validated')};
+  if(n > 20)  return {c:'bad', n,   t:L('🚨 Rattrapage nécessaire','🚨 Resit needed')};
+  return n >= 14
+    ? {c:'bad', n, t:L(`🚨 ${x}/20 requis`,`🚨 Need ${x}/20`)}
+    : n >= 10
+    ? {c:'warn', n, t:L(`⚠ ${x}/20 requis`,`⚠ Need ${x}/20`)}
+    : {c:'ok',   n, t:L(`✓ ${x}/20 suffit`,`✓ ${x}/20 is enough`)};
+}
 
 /* ================= POMODORO ================= */
 const P={mode:'f',run:false,end:0,left:1500,sid:''};
@@ -1613,14 +1703,59 @@ ${card('c12','.96',`<div class="wk"><div style="min-width:170px"><div class="ct"
 
 const DAYS=()=>lang==='fr'?['lundi','mardi','mercredi','jeudi','vendredi','samedi']:['monday','tuesday','wednesday','thursday','friday','saturday'];
 
-R.moyenne=()=>{const st=stats(),tb=n=>{const ss=data.subjects.filter(s=>s.semester===n),x=n===1?st.s1:st.s2;
-return`<div class="card" style="margin-bottom:12px"><div class="ct" style="margin-bottom:10px">📘 ${L('Semestre','Semester')} ${n} <span class="chip high" style="margin-left:6px">${x.vc}/${x.tc} ${L('crédits','credits')}</span></div><div class="tbl">
-${[L('Matière','Subject'),'Oral 10%','DS 20%',L('Examen 70%','Exam 70%'),L('Moy','Avg'),'Coef',''].map(h=>`<div class="h">${h}</div>`).join('')}
-${ss.map(s=>{const a=avg(s);return`<div class="n" data-a="sd-open" data-id="${s.id}" style="cursor:pointer" title="${L('Voir / modifier','View / edit')}"><i style="background:var(--c-${s.color}-text)"></i><span>${esc(s.name)}</span></div>`+['oral','ds','exam'].map(k=>`<input type="number" min="0" max="20" step=".25" placeholder="—" value="${fill(s[k])?s[k]:''}" data-g="${k}" data-id="${s.id}">`).join('')+`<div class="av2 ${a===null?'':a>=10?'g':'b'}">${a!==null?a.toFixed(2):'—'}</div><div class="cf">${s.coef}</div><button class="x" data-a="del" data-k="subject" data-id="${s.id}">✕</button>`}).join('')||`<div style="grid-column:1/-1;text-align:center;color:var(--mu);font-size:13px;padding:12px">${L('Aucune matière.','No subjects.')}</div>`}</div></div>`};
-return`<div class="card" style="margin-bottom:14px"><div class="ch"><div><div class="ct">${L('Moyenne & Notes','Average & Grades')}</div><div class="cs">${L('Oral 10% · DS 20% · Examen 70% · Crédits validés si moyenne ≥ 10','Oral 10% · Test 20% · Exam 70% · Credits validated if average ≥ 10')}</div></div><button class="btn" data-a="add" data-k="subject">${L('+ Matière','+ Subject')}</button></div>
-<div class="ms" style="margin:0"><div class="card" style="background:var(--b1)"><div class="kl">${L('Générale','Overall')}</div><div class="kn">${st.gpa!==null?st.gpa.toFixed(2):'—'}</div><div class="ks"><b>${st.vc}</b> / ${st.tc} ${L('crédits','credits')}</div></div>
-<div class="card"><div class="kl">S1</div><div class="kn" style="font-size:24px">${st.s1.avg!==null?st.s1.avg.toFixed(2):'—'}</div></div>
-<div class="card"><div class="kl">S2</div><div class="kn" style="font-size:24px">${st.s2.avg!==null?st.s2.avg.toFixed(2):'—'}</div></div></div></div>${tb(1)}${tb(2)}`};
+R.moyenne = () => {
+  const st = stats();
+  const f  = getFormula();
+  const cols = formulaCols();
+  const tblStyle = `grid-template-columns:minmax(150px,2fr) repeat(${cols.length + 1},72px) 52px 24px`;
+
+  const tb = n => {
+    const ss = data.subjects.filter(s => s.semester === n);
+    const x  = n === 1 ? st.s1 : st.s2;
+    const heads = [L('Matière','Subject'), ...cols.map(k => gradeLabel(k, f.weights[k])), L('Moy','Avg'), 'Coef', ''];
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="ct" style="margin-bottom:10px">📘 ${L('Semestre','Semester')} ${n}
+        <span class="chip high" style="margin-left:6px">${x.vc}/${x.tc} ${L('crédits','credits')}</span>
+      </div>
+      <div class="tbl" style="${tblStyle}">
+        ${heads.map(h => `<div class="h">${h}</div>`).join('')}
+        ${ss.map(s => {
+          const a = avg(s);
+          return `<div class="n" data-a="sd-open" data-id="${s.id}" style="cursor:pointer" title="${L('Voir / modifier','View / edit')}">
+            <i style="background:var(--c-${s.color}-text)"></i>
+            <span>${esc(s.name)}</span>
+          </div>`
+          + cols.map(k => `<input type="number" min="0" max="20" step=".25" placeholder="—" value="${fill(s[k])?s[k]:''}" data-g="${k}" data-id="${s.id}">`).join('')
+          + `<div class="av2 ${a===null?'':a>=10?'g':'b'}">${a!==null?a.toFixed(2):'—'}</div>
+             <div class="cf">${s.coef}</div>
+             <button class="x" data-a="del" data-k="subject" data-id="${s.id}">✕</button>`;
+        }).join('') || `<div style="grid-column:1/-1;text-align:center;color:var(--mu);font-size:13px;padding:12px">${L('Aucune matière.','No subjects.')}</div>`}
+      </div>
+    </div>`;
+  };
+
+  return `<div class="card" style="margin-bottom:14px">
+    <div class="ch">
+      <div>
+        <div class="ct">${L('Moyenne & Notes','Average & Grades')}</div>
+        <div class="cs">${esc(f.desc)} · ${L('Crédits validés si moyenne ≥ 10','Credits validated if average ≥ 10')}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn g" data-a="regime-open">⚙ ${L('Régime','Regime')}</button>
+        <button class="btn" data-a="add" data-k="subject">${L('+ Matière','+ Subject')}</button>
+      </div>
+    </div>
+    <div class="ms" style="margin:0">
+      <div class="card" style="background:var(--b1)">
+        <div class="kl">${L('Générale','Overall')}</div>
+        <div class="kn">${st.gpa!==null?st.gpa.toFixed(2):'—'}</div>
+        <div class="ks"><b>${st.vc}</b> / ${st.tc} ${L('crédits','credits')}</div>
+      </div>
+      <div class="card"><div class="kl">S1</div><div class="kn" style="font-size:24px">${st.s1.avg!==null?st.s1.avg.toFixed(2):'—'}</div></div>
+      <div class="card"><div class="kl">S2</div><div class="kn" style="font-size:24px">${st.s2.avg!==null?st.s2.avg.toFixed(2):'—'}</div></div>
+    </div>
+  </div>${tb(1)}${tb(2)}`;
+};
 
 let ROWS=[{s:'08:00',e:'09:30'},{s:'09:35',e:'11:05'},{s:'11:10',e:'12:40'},{p:1,s:'12:40',e:'13:20'},{s:'13:20',e:'14:50'},{s:'14:55',e:'16:25'},{s:'16:30',e:'18:00'}];
 function syncRows(){if(data&&data.cfg&&Array.isArray(data.cfg.sessions)&&data.cfg.sessions.length===7){ROWS=data.cfg.sessions.map(x=>({...x}))}}
@@ -1662,7 +1797,7 @@ if(frev){const c=data.cards.find(x=>x.id===frev[0]);if(!c){frev=null;return R.fl
 body=`<div class="cs" style="text-align:center;margin-bottom:8px">${frev.length} ${L('carte(s) restante(s)','card(s) left')}</div><div class="flash">${esc(fflip?c.a:c.q)}</div><div class="row" style="margin-top:12px">${fflip?`<button class="btn g" style="flex:1" data-a="fk">${L('✗ À revoir','✗ Again')}</button><button class="btn" style="flex:1" data-a="fo">${L('✓ Je savais','✓ Got it')}</button>`:`<button class="btn" style="flex:2" data-a="ff">${L('Voir la réponse','Show answer')}</button>`}<button class="btn g" style="flex:1" data-a="fs">${L('Arrêter','Stop')}</button></div>`}
 else body=`<div class="sr" style="margin-bottom:12px"><div><b>${mine.length}</b><small>${L('cartes','cards')}</small></div><div><b>${due.length}</b><small>${L('à réviser','due')}</small></div>${due.length?`<div style="display:grid;place-items:center"><button class="btn sm" data-a="fr">${L('▶ Réviser','▶ Review')}</button></div>`:''}</div>
 <div class="f2" style="margin-bottom:8px"><input class="in2" id="fq" placeholder="Question"><input class="in2" id="fa" placeholder="${L('Réponse','Answer')}"></div><button class="btn sm" data-a="fadd">${L('+ Ajouter la carte','+ Add card')}</button>
-<div style="margin-top:14px">${mine.length?mine.map(c=>`<div class="item"><div class="in"><b>${esc(c.q)}</b><small>${L('niveau','box')} ${c.box}/5 · ${L('revoir','review')} ${c.due}</small></div><button class="x" data-a="fdel" data-id="${c.id}">✕</button></div>`).join(''):empty('🃏',L('Aucune carte','No cards'),L('Ajoute ta première question/réponse.','Add your first question/answer.'))}</div>`;
+<div style="margin-top:14px">${mine.length?mine.map(c=>`<div class="item"><div class="in"><b>${esc(c.q)}</b><small>${L('niveau','box')} ${c.box}/5 · ${L('revoir','review')} ${c.due}</small></div><button class="x" data-a="fdel" data-id="${c.id}">✕</button></div>`).join(''):empty('🃏',L('Aucune carte','No cards'),L('Ajoute ta première question/réponse.','Add your first question/answer.'))}</div>`; 
 return card('','0',`<div class="ch"><div><div class="ct">Flashcards</div><div class="cs">${L('Répétition espacée · boîtes de Leitner','Spaced repetition · Leitner boxes')}</div></div>${subSel('fsel',fsub)}</div>${body}`)};
 
 /* ================= SHELL ================= */
@@ -1775,14 +1910,28 @@ function openSessionsEditor(){
 }
 /* ============ MODAL DÉTAIL MATIÈRE ============ */
 function openSubjectDetail(id){
-  const s=sub(id);if(!s)return;
-  const a=avg(s),ok=a!==null&&a>=10,r=risk(s);
-  const colorMap={blue:'var(--c-blue-text)',green:'var(--c-green-text)',orange:'var(--c-orange-text)',red:'var(--c-red-text)',purple:'var(--c-purple-text)',teal:'var(--c-teal-text)',pink:'var(--c-pink-text)'};
-  const dot=colorMap[s.color]||colorMap.blue;
+  const s = sub(id); if(!s) return;
+  const a = avg(s), ok = a !== null && a >= 10, r = risk(s);
+  const f = getFormula();
+  const cols = formulaCols();
+  const colorMap = {blue:'var(--c-blue-text)',green:'var(--c-green-text)',orange:'var(--c-orange-text)',red:'var(--c-red-text)',purple:'var(--c-purple-text)',teal:'var(--c-teal-text)',pink:'var(--c-pink-text)'};
+  const dot = colorMap[s.color] || colorMap.blue;
 
-  modal.innerHTML=`
+  // Champs de notes dynamiques (2 par ligne)
+  let gradeHtml = '';
+  for (let i = 0; i < cols.length; i += 2){
+    gradeHtml += '<div class="f2">';
+    for (let j = i; j < Math.min(i + 2, cols.length); j++){
+      const k = cols[j];
+      gradeHtml += `<div class="fg"><label>${gradeLabel(k, f.weights[k])}</label>
+        <input class="in2" type="number" id="sd_${k}" min="0" max="20" step=".25"
+               value="${fill(s[k]) ? s[k] : ''}" placeholder="—"></div>`;
+    }
+    gradeHtml += '</div>';
+  }
+
+  modal.innerHTML = `
     <h2>${L('Détail de la matière','Subject details')}</h2>
-
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px;border-radius:12px;background:var(--s1)">
       <span style="width:14px;height:14px;border-radius:50%;background:${dot};box-shadow:0 0 14px ${dot};flex-shrink:0"></span>
       <div style="flex:1;min-width:0">
@@ -1794,7 +1943,6 @@ function openSubjectDetail(id){
         <div style="font-size:11px;color:var(--mu);margin-top:2px">${ok?'✓ '+L('Validée','Validated'):''}</div>
       </div>
     </div>
-
     <div style="font-size:11px;font-weight:700;color:var(--mu);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px">${L('Informations','Information')}</div>
     <div class="f2">
       <div class="fg"><label>${L('Nom','Name')}</label><input class="in2" id="sd_name" value="${esc(s.name)}"></div>
@@ -1807,16 +1955,9 @@ function openSubjectDetail(id){
     <div class="fg"><label>${L('Semestre','Semester')}</label>
       <select class="sel" id="sd_semester"><option value="1"${s.semester===1?' selected':''}>S1</option><option value="2"${s.semester===2?' selected':''}>S2</option></select>
     </div>
-
-    <div style="font-size:11px;font-weight:700;color:var(--mu);letter-spacing:1.2px;text-transform:uppercase;margin:14px 0 6px">${L('Notes (Oral 10% · DS 20% · Examen 70%)','Grades (Oral 10% · Test 20% · Exam 70%)')}</div>
-    <div class="f2">
-      <div class="fg"><label>Oral 10%</label><input class="in2" type="number" id="sd_oral" min="0" max="20" step=".25" value="${fill(s.oral)?s.oral:''}" placeholder="—"></div>
-      <div class="fg"><label>DS 20%</label><input class="in2" type="number" id="sd_ds" min="0" max="20" step=".25" value="${fill(s.ds)?s.ds:''}" placeholder="—"></div>
-    </div>
-    <div class="fg"><label>${L('Examen 70%','Exam 70%')}</label><input class="in2" type="number" id="sd_exam" min="0" max="20" step=".25" value="${fill(s.exam)?s.exam:''}" placeholder="—"></div>
-
+    <div style="font-size:11px;font-weight:700;color:var(--mu);letter-spacing:1.2px;text-transform:uppercase;margin:14px 0 6px">${L('Notes','Grades')} — ${esc(f.desc)}</div>
+    ${gradeHtml}
     ${r?`<div style="text-align:center;margin-top:10px"><span class="chip ${r.c}">${r.t}</span></div>`:''}
-
     <div class="ma" style="justify-content:space-between;margin-top:18px">
       <button class="btn g sm" data-a="sd-del" data-id="${s.id}" style="background:var(--c-red-bg);color:var(--c-red-text);border:1px solid var(--c-red-bd)">🗑 ${L('Supprimer','Delete')}</button>
       <div style="display:flex;gap:8px">
@@ -1825,7 +1966,36 @@ function openSubjectDetail(id){
       </div>
     </div>`;
   ov.classList.add('on');
-  const fi=modal.querySelector('input');if(fi)fi.focus();
+  const fi = modal.querySelector('input'); if(fi) fi.focus();
+}
+
+/* ============ MODAL RÉGIME ============ */
+function openRegimeModal(){
+  const cfg = (data.cfg && data.cfg.regime) || DEFAULT_REGIME;
+  let html = '';
+  for (const [gk, grp] of Object.entries(REGIMES)){
+    html += `<div style="margin-bottom:14px">
+      <div class="regime-group-title">${esc(grp.label)}</div>`;
+    for (const f of grp.formulas){
+      const checked = cfg.group === gk && cfg.formula === f.id;
+      html += `<label class="regime-option">
+        <input type="radio" name="regime-pick" value="${gk}::${f.id}" ${checked ? 'checked' : ''}>
+        <div class="ro-body">
+          <div class="ro-desc">${esc(f.desc)}</div>
+          <div class="ro-sub">${esc(f.label)}</div>
+        </div>
+      </label>`;
+    }
+    html += `</div>`;
+  }
+  modal.innerHTML = `<h2>${L('Régime de calcul','Grading regime')}</h2>
+    <p style="font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.5">${L('Choisis la formule utilisée pour calculer toutes tes moyennes. Les notes déjà saisies sont conservées.','Choose the formula used to compute all your averages. Existing grades are kept.')}</p>
+    ${html}
+    <div class="ma">
+      <button class="btn g" data-a="mx">${L('Annuler','Cancel')}</button>
+      <button class="btn" data-a="regime-save">${L('Appliquer','Apply')}</button>
+    </div>`;
+  ov.classList.add('on');
 }
 
 /* ================= WELCOME ================= */
@@ -1963,10 +2133,12 @@ home:goHome,
   s.credits=Math.max(1,parseInt($('#sd_credits').value)||3);
   s.coef=Math.max(.5,parseFloat($('#sd_coef').value)||1);
   s.semester=+$('#sd_semester').value;
-  ['oral','ds','exam'].forEach(k=>{
-    const v=$('#sd_'+k).value.trim();
-    if(v==='')s[k]=null;
-    else{const n=parseFloat(v);if(n>=0&&n<=20)s[k]=n}
+  formulaCols().forEach(k=>{
+    const el = $('#sd_' + k);
+    if (!el) return;
+    const v = el.value.trim();
+    if (v === '') s[k] = null;
+    else { const n = parseFloat(v); if (n >= 0 && n <= 20) s[k] = n; }
   });
   save();closeModal();render();
   toast(L('Matière mise à jour ✓','Subject updated ✓'));
@@ -1976,6 +2148,17 @@ home:goHome,
   delSubject(d.id);
   save();closeModal();render();
   toast(L('Matière supprimée','Subject deleted'));
+},
+'regime-open': () => openRegimeModal(),
+'regime-save': () => {
+  const sel = document.querySelector('input[name="regime-pick"]:checked');
+  if(!sel) return closeModal();
+  const [group, formula] = sel.value.split('::');
+  data.cfg.regime = { group, formula };
+  save();
+  closeModal();
+  render();
+  toast(L('Régime appliqué ✓','Regime applied ✓'));
 },
 wstep:d=>goStep(+d.n),
 'wstep-next':()=>{const inp=$('#nameInput');if(!inp||!inp.value.trim()){if(inp)inp.focus();return toast(L('Entre ton prénom','Enter your name'))}goStep(3)},
